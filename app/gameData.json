@@ -1,19 +1,19 @@
 [
   {
-    "question": "Выбери вариант?",
-    "image": "image.png",
+    "question": "Выбери вариант МОСТ",
+    "image": "image_land.jpg",
     "answer": [ "Мост", "Рудник", "Река", "Солнце" ],
     "rightAnswer": "мост"
   },
   {
     "question": "Что горит?",
-    "image": "image.png",
+    "image": "image_port.jpg",
     "answer": [ "Вода", "Огонь", "Ветер", "Земля" ],
     "rightAnswer": "ОгоНЬ"
   },
   {
-    "question": "При скольки градусов замерзает вода?",
-    "image": "image.png",
+    "question": "t замерзания воды?",
+    "image": "image_land.jpg",
     "answer": [ "0", "-1", "1", "-10" ],
     "rightAnswer": "0"
   }

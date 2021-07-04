@@ -38,11 +38,13 @@ window.onload = function() {
 		// TODO: change quest by script
 		questIndex: 0,
 		quest: null,
+		questImage: null,
 		totalRightAnswers: 0, // количество правильных ответов
 		scene: null,
 	};
+	shuffleQuestAnswer(gameData); // shuffle quest
 	game.quest = gameData[game.questIndex];
-	shuffleQuestAnswer(gameData[game.questIndex].answer);
+	shuffleQuestAnswer(gameData[game.questIndex].answer); // shuffle first quest answers
 
 	// присваем всем квестам статус не выполнен
 	gameData.forEach(element => element.status = null);
@@ -54,6 +56,8 @@ window.onload = function() {
 			uiButtons: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
 			questProgress: { x: 10, y: 10, w: cW - 20, h: 20 },
 		}
+		area.image = { x: 10, y: area.questProgress.y + area.questProgress.h + 10,
+			w: cW - 20, h: area.questionLabel.y - area.questProgress.y - (area.questProgress.h * 2) };
 	}
 	// TODO: add areas for landscape mode
 
@@ -156,14 +160,37 @@ function draw() {
 		context.fillText(value.data, cW / 2, value.y + 35);
 	});
 
+	// draw image
+	game.questImage = new Image();
+	game.questImage.src = 'assets/images/' + game.quest.image;
+
+	// carculate image ratio by area.image size
+	if (game.questImage.width >= game.questImage.height) {
+		if (game.questImage.height > area.image.h) {
+			let ratio = game.questImage.width / area.image.w;
+			let newImageW = area.image.w / ratio;
+			let newImageH = area.image.h;
+
+			context.drawImage(game.questImage, getCenterH(cW, newImageW), area.image.y,
+				newImageW, newImageH);
+		}
+		else {
+			// TODO: draw image center
+			// TODO: add option to sizeUp images to engine config
+		}
+	}
+	else {
+		let ratio = game.questImage.height / area.image.h;
+		let newImageW = area.image.w / ratio;
+
+		context.drawImage(game.questImage, getCenterH(cW, newImageW), area.image.y,
+			newImageW, area.image.h);
+	}
+
 	// draw progress bar
 	let sizeProgressItem = area.questProgress.w / gameData.length;
 
 	context.strokeStyle = "black";
-
-			// for (const [key, value] of Object.entries(area)) {
-			// 	context.strokeRect(value.x, value.y, value.w, value.h);
-			// }
 
 	for (let i = 0; i < gameData.length; i++) {
 		// change progress item color by status answer

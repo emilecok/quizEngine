@@ -5,6 +5,7 @@ import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
+import { checkAnswer } from './game.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -64,6 +65,27 @@ window.onload = function() {
 		if (isInside(mousePos, button.info)) {
 			console.log("info");
 		}
+
+		// click by first answer button
+		if (isInside(mousePos, button.answerButtons[0])) {
+			console.log(checkAnswer(game.quest, button.answerButtons[0].data));
+		}
+
+		// click by second answer button
+		if (isInside(mousePos, button.answerButtons[1])) {
+			console.log(checkAnswer(game.quest, button.answerButtons[1].data));
+		}
+
+		// click by third answer button
+		if (isInside(mousePos, button.answerButtons[2])) {
+			console.log(checkAnswer(game.quest, button.answerButtons[2].data));
+		}
+
+		// click by four answer button
+		if (isInside(mousePos, button.answerButtons[3])) {
+			console.log(checkAnswer(game.quest, button.answerButtons[3].data));
+		}
+
 	}, false);
 
 	window.requestAnimationFrame(gameLoop);

@@ -3,6 +3,6 @@
     "question": "Что это такое?",
     "image": "image.png",
     "answer": [ "Мост", "Рудник", "Река", "Солнце" ],
-    "rightAnser": "мост"
+    "rightAnswer": "мост"
   }
 ]

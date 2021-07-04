@@ -37,6 +37,8 @@ window.onload = function() {
 
 	area = {
 		answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
+		questionLabel: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
+		uiButtons: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
 	}
 
 	button = {
@@ -85,7 +87,6 @@ window.onload = function() {
 		if (isInside(mousePos, button.answerButtons[3])) {
 			console.log(checkAnswer(game.quest, button.answerButtons[3].data));
 		}
-
 	}, false);
 
 	window.requestAnimationFrame(gameLoop);
@@ -122,17 +123,18 @@ function draw() {
 			// TODO: draw answer buttons area by landscape
 			console.log('TODO: draw answer buttons area by landscape');
 		else
-			context.strokeRect(area.answerButtons.x, area.answerButtons.y,
-				area.answerButtons.w, area.answerButtons.h);
+			for (const [key, value] of Object.entries(area)) {
+				context.strokeRect(value.x, value.y, value.w, value.h);
+			}
 	}
 
-	// draw quest ------------------------------------------
+	// draw question label
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
 	context.fillStyle = "white";
-	context.fillText(gameData[0].question, cW / 2, cH - 420);
+	context.fillText(gameData[0].question, cW / 2, area.questionLabel.y + 30);
 
-	// draw answer buttons ------------------------------------------
+	// draw answer buttons
 	context.fillStyle = "purple";
 	context.strokeStyle = "navy";
 	context.lineWidth = 2;

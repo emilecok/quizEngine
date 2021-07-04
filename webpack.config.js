@@ -5,7 +5,7 @@ module.exports = {
   mode: 'development',
   output: {
     // libraryExport: 'default',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '.'),
     filename: 'game.js',
   },
 };

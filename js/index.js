@@ -1,65 +1,52 @@
 'use strict';
 
-import config from '../config.json';
-import gameData from '../gameData.json';
+import config from '../config.json'; // game configuration
+import gameData from '../gameData.json'; // game data
 
+import { getMousePos, isInside } from './buttons.js';
+import { clearContext } from './draw.js';
+
+// Engine variables -------------------------------------
 let DEBUG = true;
-let canvas;
-let context;
-let cW;
-let cH;
-let landscape = true;
+let canvas = null; // canvas id
+let context = null; // context id
+let cW = null; // canvas with
+let cH = null; // canvas height
+let orientation = null; // screen orientation
+let button = null; // buttons array
+let area = null; // game areas (buttons, images, etc.)
 
-let button = null;
-
-let dragging = false;
-
-function mMove(e) {
-	if (dragging) {
-		point.pX = e.offsetX * cW / canvas.clientWidth | 0;
-		point.pY = e.offsetY * cH / canvas.clientHeight | 0;
-	};
-}
-
-function mDown(e) {
-	dragging = true;
-}
-
-function mUp(e) {
-	dragging = false;
-}
-
-function clearContext() {
-	let graBack = context.createLinearGradient(cW / 2, 0, cW / 2, cH);
-	graBack.addColorStop(0, config.scene.backGradient[0]);
-	graBack.addColorStop(1, config.scene.backGradient[1]);
-	context.fillStyle = graBack;
-	context.fillRect(0, 0, cW, cH);
-}
-
-// Init
+// Init -------------------------------------------------
 window.onload = function() {
+	// init canvas id and sizes
 	canvas = document.getElementById('game');
 	context = canvas.getContext('2d');
 	cW = canvas.width;
 	cH = canvas.height;
 
-	if (cW >= cH) {
-		landscape = true;
-	}
-	else {
-		landscape = false;
-	}
+	// set screen orientation by carculate canvas width&height
+	if (cW >= cH) {	orientation = true;	}
+	else { orientation = false;	}
 
 	button = {
 		info: { x: 10, y: cH - 80, w: 70, h: 70 },
 		sfx: { x: cW - 80, y: cH - 80, w: 70, h: 70 },
 	}
 
+	canvas.addEventListener('click', function(evt) {
+		let mousePos = getMousePos(canvas, evt);
+
+		// bet inscrease
+		if (isInside(mousePos, button.info)) {
+			console.log("info");
+		}
+	}, false);
+
 	window.requestAnimationFrame(gameLoop);
 };
 
-// GameLoop
+
+// GameLoop ---------------------------------------------
 function gameLoop(timeStamp) {
 	update();
 	draw();
@@ -67,11 +54,25 @@ function gameLoop(timeStamp) {
 	window.requestAnimationFrame(gameLoop);
 }
 
+// Game update func -------------------------------------
 function update() {
 }
 
+// Draw to canvas func ----------------------------------
 function draw() {
-	clearContext();
+	clearContext(canvas, config); // flush?! canvas
+
+	if (DEBUG) {
+		context.strokeStyle = "red";
+		context.lineWidth = 2;
+
+		// answer buttons area
+		if (orientation)
+			// TODO: draw answer buttons area by landscape
+			console.log('TODO: draw answer buttons area by landscape');
+		else
+			context.strokeRect(10, cH - 390, cW - 20, 300);
+	}
 
 	// draw image ------------------------------------------
 	// let imageSize = { w: 320, h: 140 };

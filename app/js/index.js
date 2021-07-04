@@ -15,6 +15,7 @@ let cH = null; // canvas height
 let orientation = null; // screen orientation
 let button = null; // buttons array
 let area = null; // game areas (buttons, images, etc.)
+let game = null;
 
 // Init -------------------------------------------------
 window.onload = function() {
@@ -28,6 +29,11 @@ window.onload = function() {
 	if (cW >= cH) {	orientation = true;	}
 	else { orientation = false;	}
 
+	game = {
+		// TODO: change quest by script
+		quest: gameData[0],
+	};
+
 	area = {
 		answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
 	}
@@ -37,10 +43,10 @@ window.onload = function() {
 		sfx: { x: cW - 80, y: cH - 80, w: 70, h: 70 },
 		// TODO: change data: to null
 		answerButtons: [
-			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "olololosdgsdggs" },
-			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
-			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
-			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null },
 		],
 	}
 
@@ -74,6 +80,10 @@ function gameLoop(timeStamp) {
 
 // Game update func -------------------------------------
 function update() {
+	// Update answer buttons label
+	button.answerButtons.forEach(function callback(value, index) {
+		value.data = game.quest.answer[index];
+	});
 }
 
 // Draw to canvas func ----------------------------------
@@ -94,29 +104,25 @@ function draw() {
 				area.answerButtons.w, area.answerButtons.h);
 	}
 
-	// draw image ------------------------------------------
-	// let imageSize = { w: 320, h: 140 };
-	// let graImage = context.createLinearGradient(cW / 2 - imageSize.w / 2, cH / 2 - imageSize.h / 2, cW / 2 - imageSize.w / 2 + imageSize.w, cH / 2 - imageSize.h / 2 + imageSize.h);
-	// graImage.addColorStop(0, "#ff4ba7");
-	// graImage.addColorStop(1, "#ffda64");
-	// context.fillStyle = graImage;
-	// context.fillRect(cW / 2 - imageSize.w / 2, cH / 2 - imageSize.h / 2,
-	// 	imageSize.w, imageSize.h);
-
 	// draw quest ------------------------------------------
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
 	context.fillStyle = "white";
 	context.fillText(gameData[0].question, cW / 2, cH - 420);
 
-	// draw buttons ------------------------------------------
-	context.fillStyle = "yellow";
+	// draw answer buttons ------------------------------------------
+	context.fillStyle = "purple";
+	context.strokeStyle = "navy";
+	context.lineWidth = 2;
 
 	for (let i = 0; i <= button.answerButtons.length - 1; i++) {
 		context.fillRect(button.answerButtons[i].x, button.answerButtons[i].y,
 			button.answerButtons[i].w, button.answerButtons[i].h);
+		context.strokeRect(button.answerButtons[i].x, button.answerButtons[i].y,
+			button.answerButtons[i].w, button.answerButtons[i].h);
 	}
 
+	// draw answer button label
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
 	context.fillStyle = "white";
@@ -128,17 +134,12 @@ function draw() {
 
 
 	// UI ------------------------------------------
+	// TODO: переписать это всё г*
 	context.fillStyle = "red";
 	context.strokeStyle = "navy";
-    context.lineWidth = 2;
+	context.lineWidth = 2;
 	context.fillRect(button.info.x, button.info.y, button.info.w, button.info.h); // info button
 	context.strokeRect(button.info.x, button.info.y, button.info.w, button.info.h); // info button
 	context.fillRect(button.sfx.x, button.sfx.y, button.sfx.w, button.sfx.h); // sfx button
 	context.strokeRect(button.sfx.x, button.sfx.y, button.sfx.w, button.sfx.h); // sfx button
-
-	let q = 10;
-
-	for (var i = 1; i <= q - 1; i++) {
-		q[i];
-	}
 }

@@ -1,1 +1,3 @@
+- button hover animation
+- splash (loading) screen
 - make docs/

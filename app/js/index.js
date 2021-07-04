@@ -5,7 +5,7 @@ import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { checkAnswer } from './game.js';
+import { checkAnswer, nextQuest } from './game.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -30,15 +30,22 @@ window.onload = function() {
 	if (cW >= cH) {	orientation = true;	}
 	else { orientation = false;	}
 
+	if (DEBUG) {
+		console.log(`Loaded ${gameData.length} quests.`);
+	}
+
 	game = {
 		// TODO: change quest by script
-		quest: gameData[0],
+		questIndex: 0,
+		quest: null,
 	};
+	game.quest = gameData[game.questIndex];
 
 	area = {
 		answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
 		questionLabel: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
 		uiButtons: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
+		questProgress: { x: 0, y: 0, w: 0, h: 0 },
 	}
 
 	button = {
@@ -70,7 +77,9 @@ window.onload = function() {
 
 		// click by first answer button
 		if (isInside(mousePos, button.answerButtons[0])) {
-			console.log(checkAnswer(game.quest, button.answerButtons[0].data));
+			if (checkAnswer(game.quest, button.answerButtons[0].data)) {
+				game.quest = gameData[nextQuest(gameData, game.questIndex)];
+			}
 		}
 
 		// click by second answer button
@@ -132,7 +141,7 @@ function draw() {
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
 	context.fillStyle = "white";
-	context.fillText(gameData[0].question, cW / 2, area.questionLabel.y + 30);
+	context.fillText(game.quest.question, cW / 2, area.questionLabel.y + 30);
 
 	// draw answer buttons
 	context.fillStyle = "purple";

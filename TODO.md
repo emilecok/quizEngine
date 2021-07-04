@@ -1,3 +1,5 @@
+- add quest progress
+- change quest animation
 - button hover animation
 - splash (loading) screen
 - make docs/

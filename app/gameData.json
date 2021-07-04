@@ -1,8 +1,14 @@
 [
   {
-    "question": "Что это такое?",
+    "question": "Выбери вариант?",
     "image": "image.png",
     "answer": [ "Мост", "Рудник", "Река", "Солнце" ],
     "rightAnswer": "мост"
+  },
+  {
+    "question": "Что горит?",
+    "image": "image.png",
+    "answer": [ "Вода", "Огонь", "Ветер", "Земля" ],
+    "rightAnswer": "ОгоНЬ"
   }
 ]

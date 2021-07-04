@@ -5,7 +5,7 @@ import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { nextQuest } from './game.js';
+import { nextQuest, shuffleQuestAnswer } from './game.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -41,6 +41,7 @@ window.onload = function() {
 		totalRightAnswers: 0, // количество правильных ответов
 	};
 	game.quest = gameData[game.questIndex];
+	shuffleQuestAnswer(gameData[game.questIndex].answer);
 
 	// присваем всем квестам статус не выполнен
 	gameData.forEach(element => element.status = null);
@@ -85,8 +86,9 @@ window.onload = function() {
 		// click by first answer button
 		if (isInside(mousePos, button.answerButtons[0])) {
 			if (nextQuest(gameData, game.questIndex, button.answerButtons[0].data)) {
-				game.quest = gameData[game.questIndex += 1];
+				game.quest = gameData[game.questIndex += 1]; // костыль
 				game.totalRightAnswers += 1;
+				shuffleQuestAnswer(gameData[game.questIndex].answer);
 
 				if (DEBUG) {
 					console.log("Wow, right answer!!");
@@ -102,6 +104,7 @@ window.onload = function() {
 			if (nextQuest(gameData, game.questIndex, button.answerButtons[1].data)) {
 				game.quest = gameData[game.questIndex += 1];
 				game.totalRightAnswers += 1;
+				shuffleQuestAnswer(gameData[game.questIndex].answer);
 
 				if (DEBUG) {
 					console.log("Wow, right answer!!");
@@ -117,6 +120,7 @@ window.onload = function() {
 			if (nextQuest(gameData, game.questIndex, button.answerButtons[2].data)) {
 				game.quest = gameData[game.questIndex += 1];
 				game.totalRightAnswers += 1;
+				shuffleQuestAnswer(gameData[game.questIndex].answer);
 
 				if (DEBUG) {
 					console.log("Wow, right answer!!");
@@ -132,6 +136,7 @@ window.onload = function() {
 			if (nextQuest(gameData, game.questIndex, button.answerButtons[3].data)) {
 				game.quest = gameData[game.questIndex += 1];
 				game.totalRightAnswers += 1;
+				shuffleQuestAnswer(gameData[game.questIndex].answer);
 
 				if (DEBUG) {
 					console.log("Wow, right answer!!");

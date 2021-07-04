@@ -2,10 +2,10 @@ const path = require('path');
 
 module.exports = {
   entry: './js/index.js',
+  context: path.resolve(__dirname, 'app'),
   mode: 'development',
   output: {
-    // libraryExport: 'default',
-    path: path.resolve(__dirname, '.'),
+    path: path.resolve(__dirname, 'app/dist'),
     filename: 'game.js',
   },
 };

@@ -1,1 +1,2 @@
 # quizEngine
+![Logo](icon.png)

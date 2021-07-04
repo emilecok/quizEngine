@@ -1,0 +1,8 @@
+{
+  "gameName": "quizEngine",
+  "gameVersion": [0, 0, 1],
+
+  "scene": {
+    "backGradient": ["#2f80ff", "#3ccbff"]
+  }
+}

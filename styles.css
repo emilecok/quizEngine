@@ -1,0 +1,20 @@
+html { height: 100%; }
+
+body {
+	background-color: #6E5967;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+div.container {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+canvas#game {
+	margin: 0 auto;
+	display: block;
+}

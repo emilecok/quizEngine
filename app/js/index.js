@@ -4,7 +4,7 @@ import config from '../config.json'; // game configuration
 import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
-import { clearContext } from './draw.js';
+import { clearContext, getCenterH, getCenterV } from './draw.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -28,10 +28,28 @@ window.onload = function() {
 	if (cW >= cH) {	orientation = true;	}
 	else { orientation = false;	}
 
+	area = {
+		answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
+	}
+
 	button = {
 		info: { x: 10, y: cH - 80, w: 70, h: 70 },
 		sfx: { x: cW - 80, y: cH - 80, w: 70, h: 70 },
+		// TODO: change data: to null
+		answerButtons: [
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "olololosdgsdggs" },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
+			{ x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: "null" },
+		],
 	}
+
+	button.answerButtons.forEach(function callback(value, index, array) {
+		if (index == 0)
+			array[index].y = area.answerButtons.y;
+		else
+			array[index].y = array[index - 1].y + value.h + 15;
+	});
 
 	canvas.addEventListener('click', function(evt) {
 		let mousePos = getMousePos(canvas, evt);
@@ -62,6 +80,7 @@ function update() {
 function draw() {
 	clearContext(canvas, config); // flush?! canvas
 
+	// draw game areas
 	if (DEBUG) {
 		context.strokeStyle = "red";
 		context.lineWidth = 2;
@@ -71,7 +90,8 @@ function draw() {
 			// TODO: draw answer buttons area by landscape
 			console.log('TODO: draw answer buttons area by landscape');
 		else
-			context.strokeRect(10, cH - 390, cW - 20, 300);
+			context.strokeRect(area.answerButtons.x, area.answerButtons.y,
+				area.answerButtons.w, area.answerButtons.h);
 	}
 
 	// draw image ------------------------------------------
@@ -90,51 +110,21 @@ function draw() {
 	context.fillText(gameData[0].question, cW / 2, cH - 420);
 
 	// draw buttons ------------------------------------------
-	let graButton = context.createLinearGradient(0, 0, cW / 2, cH / 2);
-	graButton.addColorStop(0, "#3fff7c");
-	graButton.addColorStop(1, "#3ffbe0");
-	context.fillStyle = graButton;
+	context.fillStyle = "yellow";
 
-	function centerW(size) {
-		return cW / 2 - size / 2;
+	for (let i = 0; i <= button.answerButtons.length - 1; i++) {
+		context.fillRect(button.answerButtons[i].x, button.answerButtons[i].y,
+			button.answerButtons[i].w, button.answerButtons[i].h);
 	}
-	function centerH(size) {
-		return cH / 2 - size / 2;
-	}
-
-	context.fillRect(centerW(cW / 1.5), cH - 380, cW / 1.5, 50);
-	context.fillRect(centerW(cW / 1.5), cH - 320, cW / 1.5, 50);
-	context.fillRect(centerW(cW / 1.5), cH - 260, cW / 1.5, 50);
-	context.fillRect(centerW(cW / 1.5), cH - 200, cW / 1.5, 50);
-
-	context.strokeStyle = "navy";
-    context.lineWidth = 2;
-
-    context.strokeRect(centerW(cW / 1.5), cH - 380, cW / 1.5, 50);
-	context.strokeRect(centerW(cW / 1.5), cH - 320, cW / 1.5, 50);
-	context.strokeRect(centerW(cW / 1.5), cH - 260, cW / 1.5, 50);
-	context.strokeRect(centerW(cW / 1.5), cH - 200, cW / 1.5, 50);
 
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
 	context.fillStyle = "white";
 
-	for (let i = 0; i < 4; i++) {
-		switch(i) {
-			case 0:
-				context.fillText(gameData[0].answer[i], cW / 2, cH - 380 + 35);
-				break;
-			case 1:
-				context.fillText(gameData[0].answer[i], cW / 2, cH - 320 + 35);
-				break;
-			case 2:
-				context.fillText(gameData[0].answer[i], cW / 2, cH - 260 + 35);
-				break;
-			case 3:
-				context.fillText(gameData[0].answer[i], cW / 2, cH - 200 + 35);
-				break;
-		}
-	}
+	button.answerButtons.forEach(function callback(value) {
+		//
+		context.fillText(value.data, cW / 2, value.y + 35);
+	});
 
 
 	// UI ------------------------------------------

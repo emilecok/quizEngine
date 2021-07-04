@@ -14,3 +14,11 @@ export function clearContext(canvas, config) {
 	context.fillStyle = graBack;
 	context.fillRect(0, 0, cW, cH);
 }
+
+export function getCenterH(canvasWidth, objectWidth) {
+	return canvasWidth / 2 - objectWidth / 2;
+}
+
+export function getCenterV(canvasHeight, objectHeight) {
+	return canvasHeight / 2 - objectHeight / 2;
+}

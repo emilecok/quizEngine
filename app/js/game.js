@@ -1,13 +1,16 @@
 // функции игры
 
-// передаёт следующий квест, либо возвращает окончание кввестов
-export function nextQuest(questions, questIndex, answer) {
-	if (questions[questIndex].rightAnswer.toLowerCase() == answer.toLowerCase())
-		questions[questIndex].status = true;
+export function clickAnswer(questions, game, answer) {
+	if (questions[game.questIndex].rightAnswer.toLowerCase() == answer.toLowerCase()) {
+		questions[game.questIndex].status = true;
+		game.totalRightAnswers += 1;
+	}
 	else
-		questions[questIndex].status = false;
+		questions[game.questIndex].status = false;
 
-	if (questIndex < questions.length - 1) {
+	if (game.questIndex < questions.length - 1) {
+		game.quest = questions[game.questIndex += 1]; // костыль
+		shuffleQuestAnswer(questions[game.questIndex].answer);
 		return true;
 	}
 	else {

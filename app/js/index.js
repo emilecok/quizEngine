@@ -5,7 +5,7 @@ import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { nextQuest, shuffleQuestAnswer } from './game.js';
+import { clickAnswer, shuffleQuestAnswer } from './game.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -39,6 +39,7 @@ window.onload = function() {
 		questIndex: 0,
 		quest: null,
 		totalRightAnswers: 0, // количество правильных ответов
+		scene: null,
 	};
 	game.quest = gameData[game.questIndex];
 	shuffleQuestAnswer(gameData[game.questIndex].answer);
@@ -85,66 +86,22 @@ window.onload = function() {
 
 		// click by first answer button
 		if (isInside(mousePos, button.answerButtons[0])) {
-			if (nextQuest(gameData, game.questIndex, button.answerButtons[0].data)) {
-				game.quest = gameData[game.questIndex += 1]; // костыль
-				game.totalRightAnswers += 1;
-				shuffleQuestAnswer(gameData[game.questIndex].answer);
-
-				if (DEBUG) {
-					console.log("Wow, right answer!!");
-					console.log(`Total right answers ${game.totalRightAnswers}.`)
-				}
-			}
-			else
-				console.log("quest ALL end");
+			clickAnswer(gameData, game, button.answerButtons[0].data);
 		}
 
 		// click by second answer button
 		if (isInside(mousePos, button.answerButtons[1])) {
-			if (nextQuest(gameData, game.questIndex, button.answerButtons[1].data)) {
-				game.quest = gameData[game.questIndex += 1];
-				game.totalRightAnswers += 1;
-				shuffleQuestAnswer(gameData[game.questIndex].answer);
-
-				if (DEBUG) {
-					console.log("Wow, right answer!!");
-					console.log(`Total right answers ${game.totalRightAnswers}.`)
-				}
-			}
-			else
-				console.log("quest ALL end");
+			clickAnswer(gameData, game, button.answerButtons[1].data);
 		}
 
 		// click by third answer button
 		if (isInside(mousePos, button.answerButtons[2])) {
-			if (nextQuest(gameData, game.questIndex, button.answerButtons[2].data)) {
-				game.quest = gameData[game.questIndex += 1];
-				game.totalRightAnswers += 1;
-				shuffleQuestAnswer(gameData[game.questIndex].answer);
-
-				if (DEBUG) {
-					console.log("Wow, right answer!!");
-					console.log(`Total right answers ${game.totalRightAnswers}.`)
-				}
-			}
-			else
-				console.log("quest ALL end");
+			clickAnswer(gameData, game, button.answerButtons[2].data);
 		}
 
 		// click by four answer button
 		if (isInside(mousePos, button.answerButtons[3])) {
-			if (nextQuest(gameData, game.questIndex, button.answerButtons[3].data)) {
-				game.quest = gameData[game.questIndex += 1];
-				game.totalRightAnswers += 1;
-				shuffleQuestAnswer(gameData[game.questIndex].answer);
-
-				if (DEBUG) {
-					console.log("Wow, right answer!!");
-					console.log(`Total right answers ${game.totalRightAnswers}.`)
-				}
-			}
-			else
-				console.log("quest ALL end");
+			clickAnswer(gameData, game, button.answerButtons[3].data);
 		}
 	}, false);
 

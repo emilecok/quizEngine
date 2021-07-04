@@ -10,5 +10,11 @@
     "image": "image.png",
     "answer": [ "Вода", "Огонь", "Ветер", "Земля" ],
     "rightAnswer": "ОгоНЬ"
+  },
+  {
+    "question": "При скольки градусов замерзает вода?",
+    "image": "image.png",
+    "answer": [ "0", "-1", "1", "-10" ],
+    "rightAnswer": "0"
   }
 ]

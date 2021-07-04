@@ -5,7 +5,7 @@ import gameData from '../gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { checkAnswer, nextQuest } from './game.js';
+import { nextQuest } from './game.js';
 
 // Engine variables -------------------------------------
 let DEBUG = true;
@@ -38,15 +38,22 @@ window.onload = function() {
 		// TODO: change quest by script
 		questIndex: 0,
 		quest: null,
+		totalRightAnswers: 0, // количество правильных ответов
 	};
 	game.quest = gameData[game.questIndex];
 
-	area = {
-		answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
-		questionLabel: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
-		uiButtons: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
-		questProgress: { x: 0, y: 0, w: 0, h: 0 },
+	// присваем всем квестам статус не выполнен
+	gameData.forEach(element => element.status = null);
+
+	if (!orientation) {
+		area = {
+			answerButtons: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
+			questionLabel: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
+			uiButtons: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
+			questProgress: { x: 10, y: 10, w: cW - 20, h: 20 },
+		}
 	}
+	// TODO: add areas for landscape mode
 
 	button = {
 		info: { x: 10, y: cH - 80, w: 70, h: 70 },
@@ -77,24 +84,62 @@ window.onload = function() {
 
 		// click by first answer button
 		if (isInside(mousePos, button.answerButtons[0])) {
-			if (checkAnswer(game.quest, button.answerButtons[0].data)) {
-				game.quest = gameData[nextQuest(gameData, game.questIndex)];
+			if (nextQuest(gameData, game.questIndex, button.answerButtons[0].data)) {
+				game.quest = gameData[game.questIndex += 1];
+				game.totalRightAnswers += 1;
+
+				if (DEBUG) {
+					console.log("Wow, right answer!!");
+					console.log(`Total right answers ${game.totalRightAnswers}.`)
+				}
 			}
+			else
+				console.log("quest ALL end");
 		}
 
 		// click by second answer button
 		if (isInside(mousePos, button.answerButtons[1])) {
-			console.log(checkAnswer(game.quest, button.answerButtons[1].data));
+			if (nextQuest(gameData, game.questIndex, button.answerButtons[1].data)) {
+				game.quest = gameData[game.questIndex += 1];
+				game.totalRightAnswers += 1;
+
+				if (DEBUG) {
+					console.log("Wow, right answer!!");
+					console.log(`Total right answers ${game.totalRightAnswers}.`)
+				}
+			}
+			else
+				console.log("quest ALL end");
 		}
 
 		// click by third answer button
 		if (isInside(mousePos, button.answerButtons[2])) {
-			console.log(checkAnswer(game.quest, button.answerButtons[2].data));
+			if (nextQuest(gameData, game.questIndex, button.answerButtons[2].data)) {
+				game.quest = gameData[game.questIndex += 1];
+				game.totalRightAnswers += 1;
+
+				if (DEBUG) {
+					console.log("Wow, right answer!!");
+					console.log(`Total right answers ${game.totalRightAnswers}.`)
+				}
+			}
+			else
+				console.log("quest ALL end");
 		}
 
 		// click by four answer button
 		if (isInside(mousePos, button.answerButtons[3])) {
-			console.log(checkAnswer(game.quest, button.answerButtons[3].data));
+			if (nextQuest(gameData, game.questIndex, button.answerButtons[3].data)) {
+				game.quest = gameData[game.questIndex += 1];
+				game.totalRightAnswers += 1;
+
+				if (DEBUG) {
+					console.log("Wow, right answer!!");
+					console.log(`Total right answers ${game.totalRightAnswers}.`)
+				}
+			}
+			else
+				console.log("quest ALL end");
 		}
 	}, false);
 
@@ -122,21 +167,6 @@ function update() {
 function draw() {
 	clearContext(canvas, config); // flush?! canvas
 
-	// draw game areas
-	if (DEBUG) {
-		context.strokeStyle = "red";
-		context.lineWidth = 2;
-
-		// answer buttons area
-		if (orientation)
-			// TODO: draw answer buttons area by landscape
-			console.log('TODO: draw answer buttons area by landscape');
-		else
-			for (const [key, value] of Object.entries(area)) {
-				context.strokeRect(value.x, value.y, value.w, value.h);
-			}
-	}
-
 	// draw question label
 	context.font = "32px Ubuntu";
 	context.textAlign = "center";
@@ -161,10 +191,35 @@ function draw() {
 	context.fillStyle = "white";
 
 	button.answerButtons.forEach(function callback(value) {
-		//
 		context.fillText(value.data, cW / 2, value.y + 35);
 	});
 
+	// draw progress bar
+	let sizeProgressItem = area.questProgress.w / gameData.length;
+
+	context.strokeStyle = "black";
+
+			// for (const [key, value] of Object.entries(area)) {
+			// 	context.strokeRect(value.x, value.y, value.w, value.h);
+			// }
+
+	for (let i = 0; i < gameData.length; i++) {
+		// change progress item color by status answer
+		switch (gameData[i].status) {
+			case null:
+				context.fillStyle = "gray";
+				break;
+			case true:
+				context.fillStyle = "green";
+				break;
+			case false:
+				context.fillStyle = "red";
+				break;
+		}
+
+		context.fillRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
+		context.strokeRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
+	}
 
 	// UI ------------------------------------------
 	// TODO: переписать это всё г*
@@ -175,4 +230,19 @@ function draw() {
 	context.strokeRect(button.info.x, button.info.y, button.info.w, button.info.h); // info button
 	context.fillRect(button.sfx.x, button.sfx.y, button.sfx.w, button.sfx.h); // sfx button
 	context.strokeRect(button.sfx.x, button.sfx.y, button.sfx.w, button.sfx.h); // sfx button
+
+	// draw game areas
+	if (DEBUG) {
+		context.strokeStyle = "red";
+		context.lineWidth = 2;
+
+		// answer buttons area
+		if (orientation)
+			// TODO: draw answer buttons area by landscape
+			console.log('TODO: draw answer buttons area by landscape');
+		else
+			for (const [key, value] of Object.entries(area)) {
+				context.strokeRect(value.x, value.y, value.w, value.h);
+			}
+	}
 }

@@ -1,16 +1,16 @@
 // функции игры
 
-export function checkAnswer(question, answer) {
-	if (question.rightAnswer.toLowerCase() == answer.toLowerCase())
-		return true;
-	else
-		return false;
-}
-
 // передаёт следующий квест, либо возвращает окончание кввестов
-export function nextQuest(questions, questIndex) {
+export function nextQuest(questions, questIndex, answer) {
+	if (questions[questIndex].rightAnswer.toLowerCase() == answer.toLowerCase())
+		questions[questIndex].status = true;
+	else
+		questions[questIndex].status = false;
+
 	if (questIndex < questions.length - 1) {
-		return questIndex += 1;
+		return true;
 	}
-	// TODO: make end quest return
+	else {
+		return false;
+	}
 }

@@ -5,7 +5,7 @@ import gameData from '../app/gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { loadingLogo, clickAnswer, shuffle } from './game.js';
+import { loadingLogo, checkAnswer, shuffle } from './game.js';
 
 // Engine variables -------------------------------------
 const DEBUG = config.debug;
@@ -39,7 +39,7 @@ window.onload = function() {
 	loadingLogo(images);
 
 	game.loadedState = false;
-	game.finish = false;
+	game.finish = true; // BUG: for test (default: false)
 	game.currentQuest = 0;
 
 	shuffle(gameData); // shuffle quests
@@ -50,6 +50,7 @@ window.onload = function() {
 
 	if (!landscape_orientation) {
 		areas = {
+			// { x: 0, y: 0, w: 0, h: 0 }
 			btnAnswer: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
 			labelQuestion: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
 			btnUi: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
@@ -57,19 +58,26 @@ window.onload = function() {
 		}
 		areas.questImage = { x: 10, y: areas.questProgress.y + areas.questProgress.h + 10,
 			w: cW - 20, h: areas.labelQuestion.y - areas.questProgress.y - (areas.questProgress.h * 2) };
+
+			areas.labelFinishGameName = { x: 10, y: 60, w: cW - 20, h: 30 };
+			areas.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
+			areas.labelTotalAnswerRight = { x: 10, y: areas.labelTotalAnswerPercent.y - 70, w: cW - 20, h: 60 };
+			areas.labelTotalInfo = { x: 10, y: areas.labelTotalAnswerPercent.y + areas.labelTotalAnswerPercent.h + 10, w: cW - 20, h: 90 }
+			areas.btnRestart = { x: getCenterH(cW, cW / 2.5), y: areas.labelTotalInfo.y + areas.labelTotalInfo.h + 20, w: cW / 2.5, h: 70 };
 	}
 	// TODO: add areas for landscape mode
 
 	canvas.addEventListener('click', function(evt) {
 		let mousePos = getMousePos(canvas, evt);
 
-		// if (isInside(mousePos, button.info)) {
-		// 	console.log("info");
-		// }
-
 		for (const [key, value] of Object.entries(buttons)) {
 			if (isInside(mousePos, value)) {
-				console.log(`click on ${key}`);
+				checkAnswer(gameData[game.currentQuest], value.data);
+
+				if (game.currentQuest < gameData.length - 1) {
+					game.currentQuest += 1;
+				}
+				else game.finish = true;
 			}
 		}
 	}, false);
@@ -214,13 +222,26 @@ function draw() {
 		context.strokeStyle = "red";
 		context.lineWidth = 1;
 
-		// answer buttons area
 		if (landscape_orientation)
-			// TODO: draw answer buttons area by landscape
+			// TODO: draw areas by landscape
 			console.log('TODO: draw answer buttons area by landscape');
 		else
 			for (const [key, value] of Object.entries(areas)) {
 				context.strokeRect(value.x, value.y, value.w, value.h);
 			}
+	}
+	else if (DEBUG && game.finish) {
+		context.strokeStyle = "red";
+		context.lineWidth = 1;
+
+		let finishAreas = [areas.labelFinishGameName, areas.labelTotalAnswerRight,
+			areas.labelTotalAnswerPercent, areas.labelTotalInfo, areas.btnRestart];
+
+		if (landscape_orientation)
+			// TODO: draw areas by landscape
+			console.log('TODO: draw answer buttons area by landscape');
+		else
+			finishAreas.forEach(element =>
+				context.strokeRect(element.x, element.y, element.w, element.h));
 	}
 }

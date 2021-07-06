@@ -8,22 +8,12 @@ export function loadingLogo(imagesArray) {
 	imagesArray.logo = imgLogo;
 }
 
-export function clickAnswer(questions, game, answer) {
-	if (questions[game.questIndex].rightAnswer.toLowerCase() == answer.toLowerCase()) {
-		questions[game.questIndex].status = true;
-		game.totalRightAnswers += 1;
+export function checkAnswer(quest, answer) {
+	if (quest.rightAnswer.toLowerCase() == answer.toLowerCase()) {
+		quest.status = true;
 	}
 	else
-		questions[game.questIndex].status = false;
-
-	if (game.questIndex < questions.length - 1) {
-		game.quest = questions[game.questIndex += 1]; // костыль
-		shuffleQuestAnswer(questions[game.questIndex].answer);
-		return true;
-	}
-	else {
-		return false;
-	}
+		quest.status = false;
 }
 
 export function shuffle(array) {

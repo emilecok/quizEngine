@@ -15,7 +15,7 @@ let cW = null; // canvas with
 let cH = null; // canvas height
 let landscape_orientation = null; // canvas orientation
 let game = {}; // main game variable
-let areas = null;
+let areas = { game: {}, finish: {} };
 let images = {};
 let buttons = {};
 
@@ -39,42 +39,45 @@ window.onload = function() {
 	loadingLogo(images);
 
 	game.loadedState = false;
-	game.finish = true; // BUG: for test (default: false)
+	game.finish = false;
 	game.currentQuest = 0;
 
 	shuffle(gameData); // shuffle quests
-	shuffle(gameData[game.currentQuest].answer); // shuffle first quest answers
+	shuffle(gameData.questions[game.currentQuest].answer); // shuffle first quest answers
 
 	// присваем всем квестам статус не выполнен
-	gameData.forEach(element => element.status = null);
+	gameData.questions.forEach(element => element.status = null);
 
+	// set areas sizes
 	if (!landscape_orientation) {
-		areas = {
+		areas.game = {
 			// { x: 0, y: 0, w: 0, h: 0 }
 			btnAnswer: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
 			labelQuestion: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
 			btnUi: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
 			questProgress: { x: 10, y: 10, w: cW - 20, h: 20 },
 		}
-		areas.questImage = { x: 10, y: areas.questProgress.y + areas.questProgress.h + 10,
-			w: cW - 20, h: areas.labelQuestion.y - areas.questProgress.y - (areas.questProgress.h * 2) };
+		areas.game.questImage = { x: 10, y: areas.game.questProgress.y + areas.game.questProgress.h + 10,
+			w: cW - 20, h: areas.game.labelQuestion.y - areas.game.questProgress.y - (areas.game.questProgress.h * 2) };
 
-			areas.labelFinishGameName = { x: 10, y: 60, w: cW - 20, h: 30 };
-			areas.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
-			areas.labelTotalAnswerRight = { x: 10, y: areas.labelTotalAnswerPercent.y - 70, w: cW - 20, h: 60 };
-			areas.labelTotalInfo = { x: 10, y: areas.labelTotalAnswerPercent.y + areas.labelTotalAnswerPercent.h + 10, w: cW - 20, h: 90 }
-			areas.btnRestart = { x: getCenterH(cW, cW / 2.5), y: areas.labelTotalInfo.y + areas.labelTotalInfo.h + 20, w: cW / 2.5, h: 70 };
+		areas.finish.labelFinishGameName = { x: 10, y: 60, w: cW - 20, h: 30 };
+		areas.finish.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
+		areas.finish.labelTotalAnswerRight = { x: 10, y: areas.finish.labelTotalAnswerPercent.y - 70, w: cW - 20, h: 60 };
+		areas.finish.labelTotalInfo = { x: 10, y: areas.finish.labelTotalAnswerPercent.y + areas.finish.labelTotalAnswerPercent.h + 10, w: cW - 20, h: 90 };
 	}
-	// TODO: add areas for landscape mode
+	else {
+		// TODO: add areas for landscape mode
+	}
 
+	// click by buttons?!
 	canvas.addEventListener('click', function(evt) {
 		let mousePos = getMousePos(canvas, evt);
 
 		for (const [key, value] of Object.entries(buttons)) {
 			if (isInside(mousePos, value)) {
-				checkAnswer(gameData[game.currentQuest], value.data);
+				checkAnswer(gameData.questions[game.currentQuest], value.data);
 
-				if (game.currentQuest < gameData.length - 1) {
+				if (game.currentQuest < gameData.questions.length - 1) {
 					game.currentQuest += 1;
 				}
 				else game.finish = true;
@@ -117,15 +120,19 @@ function update() {
 
 		answerButtonsArray.forEach(function callback(value, index, array) {
 			if (index == 0)
-				array[index].y = areas.btnAnswer.y;
+				array[index].y = areas.game.btnAnswer.y;
 			else
 				array[index].y = array[index - 1].y + value.h + 15;
 		});
 
 		// Update answer buttons label
 		answerButtonsArray.forEach(function callback(value, index) {
-			value.data = gameData[game.currentQuest].answer[index];
+			value.data = gameData.questions[game.currentQuest].answer[index];
 		});
+	}
+
+	if (game.finish) {
+		buttons.btnRestart = { x: getCenterH(cW, cW / 1.5), y: areas.finish.labelTotalInfo.y + areas.finish.labelTotalInfo.h + 20, w: cW / 1.5, h: 70, data: "Ответить на вопросы заново" };
 	}
 }
 
@@ -161,13 +168,13 @@ function draw() {
 	// render game --------------------------------------
 	if (!game.finish && game.loadedState) {
 		// draw progress bar
-		let sizeProgressItem = areas.questProgress.w / gameData.length;
+		let sizeProgressItem = areas.game.questProgress.w / gameData.questions.length;
 
 		context.strokeStyle = "black";
 
-		for (let i = 0; i < gameData.length; i++) {
+		for (let i = 0; i < gameData.questions.length; i++) {
 			// change progress item color by status answer
-			switch (gameData[i].status) {
+			switch (gameData.questions[i].status) {
 				case null:
 					context.fillStyle = "gray";
 					break;
@@ -184,10 +191,10 @@ function draw() {
 		}
 
 		// draw question label
-		context.font = "32px Ubuntu";
+		context.font = "32px Yanone Kaffeesatz";
 		context.textAlign = "center";
 		context.fillStyle = "white";
-		context.fillText(gameData[game.currentQuest].question, cW / 2, areas.labelQuestion.y + 30);
+		context.fillText(gameData.questions[game.currentQuest].question, cW / 2, areas.game.labelQuestion.y + 30);
 
 		// draw answer buttons
 		context.fillStyle = "purple";
@@ -203,7 +210,7 @@ function draw() {
 		});
 
 		// draw answer button label
-		context.font = "32px Ubuntu";
+		context.font = "32px Yanone Kaffeesatz";
 		context.textAlign = "center";
 		context.fillStyle = "white";
 
@@ -214,9 +221,54 @@ function draw() {
 
 	// render result game -------------------------------
 	if (game.finish) {
-		// 
-	}
+		// draw game name label
+		context.font = "32px Yanone Kaffeesatz";
+		context.textAlign = "center";
+		context.fillStyle = "white";
 
+		context.fillText(config['gameName'], cW / 2, areas.finish.labelFinishGameName.y + 25);
+
+		// draw labelTotalAnswerRight :FIXME:
+		
+		let rightAnswer = 0;
+		gameData.questions.forEach(element => element.status ? rightAnswer += 1 : null);
+		context.font = "50px Yanone Kaffeesatz";
+		context.fillText(`Вы ответили правильно на ${rightAnswer} из ${gameData.questions.length} вопросов`, cW / 2, areas.finish.labelTotalAnswerRight.y + 45);
+		
+
+		// draw labelTotalAnswerPercent
+		let rightAnswerPercentage = Math.ceil(rightAnswer / gameData.questions.length * 100);
+		context.font = "75px Yanone Kaffeesatz";
+		context.fillText(`${rightAnswerPercentage}%`, cW / 2, areas.finish.labelTotalAnswerPercent.y + 65);
+
+		// labelTotalInfo
+		context.font = "50px Yanone Kaffeesatz";
+		let resultInfo = null;
+
+		// for (let i = gameData.answerResult.length - 1; i >= 0; i--) {
+		// 	if (rightAnswerPercentage > gameData.answerResult[i]) {
+		// 		resultInfo = gameData.answerResult[i];
+		// 	}
+		// }
+		for (const [key, value] of Object.entries(gameData.answerResult)) {
+			if (key <= rightAnswerPercentage) {
+				resultInfo = value;
+			}
+		}
+
+		context.fillText(resultInfo, cW / 2, areas.finish.labelTotalInfo.y + 55);
+		
+		// draw btnRestart
+		context.fillStyle = "purple";
+		context.strokeStyle = "navy";
+		context.fillRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
+		context.strokeRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
+
+		context.font = "32px Yanone Kaffeesatz";
+		context.textAlign = "center";
+		context.fillStyle = "white";
+		context.fillText(buttons.btnRestart.data, cW / 2, buttons.btnRestart.y + 43);
+	}
 	// draw game areas ----------------------------------
 	if (DEBUG && !game.finish && game.loadedState) {
 		context.strokeStyle = "red";
@@ -226,7 +278,7 @@ function draw() {
 			// TODO: draw areas by landscape
 			console.log('TODO: draw answer buttons area by landscape');
 		else
-			for (const [key, value] of Object.entries(areas)) {
+			for (const [key, value] of Object.entries(areas.game)) {
 				context.strokeRect(value.x, value.y, value.w, value.h);
 			}
 	}
@@ -234,14 +286,12 @@ function draw() {
 		context.strokeStyle = "red";
 		context.lineWidth = 1;
 
-		let finishAreas = [areas.labelFinishGameName, areas.labelTotalAnswerRight,
-			areas.labelTotalAnswerPercent, areas.labelTotalInfo, areas.btnRestart];
-
 		if (landscape_orientation)
 			// TODO: draw areas by landscape
 			console.log('TODO: draw answer buttons area by landscape');
 		else
-			finishAreas.forEach(element =>
-				context.strokeRect(element.x, element.y, element.w, element.h));
+			for (const [key, value] of Object.entries(areas.finish)) {
+				context.strokeRect(value.x, value.y, value.w, value.h);
+			}
 	}
 }

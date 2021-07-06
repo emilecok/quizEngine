@@ -1,5 +1,6 @@
 - loading all quest images with loading
 - splash (loading) screen
+- several correct answer
 - change quest animation
 - button hover animation
 - make docs/

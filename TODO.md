@@ -1,5 +1,10 @@
-- add quest progress
+- loading all quest images with loading
+- splash (loading) screen
 - change quest animation
 - button hover animation
-- splash (loading) screen
 - make docs/
+
+- google: if webpack mode production remove DEBUG code
+
+## done
+- add quest progress [aac38ec]

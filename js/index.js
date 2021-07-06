@@ -48,11 +48,15 @@ window.onload = function() {
 		questImages.push(value.image);
 	}
 
-	imagePreloader(questImages, function() { game.loadedState = true; });
+	imagePreloader(questImages, function() {
+		game.loadedState = true;
+		game.showAlpha = 1;
+	});
 
 	music.music = new AudioContext() || new webkitAudioContext();
 	playMusic(config, music.music);
 
+	game.showAlpha = null;
 	game.loadedState = false;
 	game.finish = false;
 	game.currentQuest = 0;
@@ -93,9 +97,21 @@ window.onload = function() {
 		// TODO: add areas for landscape mode
 	}
 
+	// hover by buttons
+	canvas.addEventListener('mousemove', e => {
+		let mousePos = getMousePos(canvas, e);
+
+		for (const [key, value] of Object.entries(buttonsUi)) {
+			if (isInside(mousePos, value)) {
+				console.log("hover", key)
+			}
+		}
+
+	});
+
 	// click by buttons
-	canvas.addEventListener('click', function(evt) {
-		let mousePos = getMousePos(canvas, evt);
+	canvas.addEventListener('click', e => {
+		let mousePos = getMousePos(canvas, e);
 
 		if (game.loadedState) {
 			for (const [key, value] of Object.entries(buttonsUi)) {
@@ -120,7 +136,10 @@ window.onload = function() {
 					if (game.currentQuest < gameData.questions.length - 1) {
 						game.currentQuest += 1;
 					}
-					else game.finish = true;
+					else {
+						game.finish = true;
+						game.showAlpha = 1;
+					}
 				}
 			}
 		}
@@ -147,6 +166,10 @@ function gameLoop(timeStamp) {
 
 // Game update func -------------------------------------
 function update() {
+	if (game.showAlpha >= 0) {
+		game.showAlpha -= 0.01;
+	}
+
 	if (!game.loadedState) {
 		if (areas.splash.pointer.position < areas.splash.border.w - 50 && areas.splash.pointer.direction) {
 			areas.splash.pointer.position += 1;
@@ -182,7 +205,6 @@ function update() {
 			value.data = gameData.questions[game.currentQuest].answer[index];
 		});
 
-		buttonsUi.uiMusic = { x: areas.game.btnUi.x, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi };
 		buttonsUi.uiInfo = { x: areas.game.btnUi.x, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
 		buttonsUi.uiMusic = { x: areas.game.btnUi.w + areas.game.btnUi.x - areas.game.btnUi.h, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
 		buttonsUi.uiSfx = { x: areas.game.btnUi.w + areas.game.btnUi.x - (areas.game.btnUi.h * 2) - 10, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
@@ -213,10 +235,6 @@ function draw() {
 		context.fillRect(areas.splash.pointer.position + areas.splash.border.x, areas.splash.border.y, 50, areas.splash.border.h);
 		context.strokeRect(areas.splash.border.x, areas.splash.border.y,
 			areas.splash.border.w, areas.splash.border.h);
-
-		context.strokeStyle = "black";
-		context.lineWidth = 2;
-		context.fillStyle = "yellow";
 	}
 
 	// render game --------------------------------------
@@ -357,5 +375,10 @@ function draw() {
 			for (const [key, value] of Object.entries(areas.finish)) {
 				context.strokeRect(value.x, value.y, value.w, value.h);
 			}
+	}
+
+	if (game.showAlpha != null) {
+		context.fillStyle =	`rgba(0,0,0,${game.showAlpha})`;
+		context.fillRect(0, 0, cW, cH);
 	}
 }

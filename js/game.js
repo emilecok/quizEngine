@@ -52,4 +52,5 @@ export function restartGame(game, quests) {
 	quests.forEach(element => element.status = null);
 	game.finish = false;
 	game.currentQuest = 0;
+	game.showAlpha = 1;
 }

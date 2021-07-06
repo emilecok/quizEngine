@@ -222,7 +222,7 @@ function update() {
 
 // Draw to canvas func ----------------------------------
 function draw() {
-	clearContext(canvas); // clean canvas
+	clearContext(canvas, config.colors.back); // clean canvas
 
 	// render splash screen -----------------------------
 	if (!game.loadedState) {
@@ -248,13 +248,13 @@ function draw() {
 			// change progress item color by status answer
 			switch (gameData.questions[i].status) {
 				case null:
-					context.fillStyle = "gray";
+					context.fillStyle = config.colors.answer.notPassed;
 					break;
 				case true:
-					context.fillStyle = "green";
+					context.fillStyle = config.colors.answer.right;
 					break;
 				case false:
-					context.fillStyle = "red";
+					context.fillStyle = config.colors.answer.wrong;
 					break;
 			}
 
@@ -274,8 +274,8 @@ function draw() {
 		context.fillText(gameData.questions[game.currentQuest].question, cW / 2, areas.game.labelQuestion.y + 30);
 
 		// draw answer buttons
-		context.fillStyle = "purple";
-		context.strokeStyle = "navy";
+		context.fillStyle = "#2ed573";
+		context.strokeStyle = "#000000";
 		context.lineWidth = 2;
 		
 		let answerButtonsArray = [buttons.answerButton0, buttons.answerButton1,
@@ -296,8 +296,8 @@ function draw() {
 		});
 
 		// draw UI buttons
-		context.fillStyle = "purple";
-		context.strokeStyle = "navy";
+		context.fillStyle = "#2ed573";
+		context.strokeStyle = "#000000";
 		context.lineWidth = 2;
 
 		for (const [key, value] of Object.entries(buttonsUi)) {
@@ -340,8 +340,8 @@ function draw() {
 		context.fillText(resultInfo, cW / 2, areas.finish.labelTotalInfo.y + 55);
 		
 		// draw btnRestart
-		context.fillStyle = "purple";
-		context.strokeStyle = "navy";
+		context.fillStyle = "#2ed573";
+		context.strokeStyle = "#000000";
 		context.fillRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
 		context.strokeRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
 

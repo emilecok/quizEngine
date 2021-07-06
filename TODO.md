@@ -1,4 +1,5 @@
 ## TODO:
+- image border
 - info widget
 - finish game image
 - desktop (landscape) orientation
@@ -7,7 +8,7 @@
 - make docs/
 - make quests editor
 
-## Done
+## DONE:
 - background music [c814f77]
 - several correct answer [498ab55]
 - loading all quest images with loading [b8aa4b6]

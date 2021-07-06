@@ -1,10 +1,10 @@
 {
   "questions": [
     {
-      "question": "Выбери вариант МОСТ",
+      "question": "Выбери вариант МОСТ или РЕКА",
       "image": "image_land.jpg",
       "answer": [ "Мост", "Рудник", "Река", "Солнце" ],
-      "rightAnswer": "мост"
+      "rightAnswer": [ "мОст", "РЕКА" ]
     },
     {
       "question": "Что горит?",

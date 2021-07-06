@@ -19,11 +19,25 @@ export function imagePreloader(images, callback) {
 }
 
 export function checkAnswer(quest, answer) {
-	if (quest.rightAnswer.toLowerCase() == answer.toLowerCase()) {
-		quest.status = true;
+	if (Array.isArray(quest.rightAnswer)) {
+		let lowerCaseArray = [];
+
+		quest.rightAnswer.forEach(item => lowerCaseArray.push(item.toLowerCase()))
+
+		if (lowerCaseArray.includes(answer.toLowerCase())) {
+			quest.status = true;
+		}
+		else {
+			quest.status = false;
+		}
 	}
-	else
-		quest.status = false;
+	else {
+		if (quest.rightAnswer.toLowerCase() == answer.toLowerCase()) {
+			quest.status = true;
+		}
+		else
+			quest.status = false;
+	}
 }
 
 export function shuffle(array) {

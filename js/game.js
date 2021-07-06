@@ -1,11 +1,21 @@
 // функции игры
 
-export function loadingLogo(imagesArray) {
-	// FIXME: возможно потом просто удалить функцию, если будет реализован imageLoader
-	let imgLogo = new Image();
-	imgLogo.src = 'assets/logo.png';
+export function imagePreloader(images, callback) {
+	let counter = 0;
 
-	imagesArray.logo = imgLogo;
+	// norm
+	function onLoad() {
+		counter += 1;
+		if (counter == images.length) callback();
+	}
+
+	let assetsDiv = document.getElementById("assets");
+
+	for (let i of images) {
+		let img = document.createElement('img');
+		img.onload = img.onerror = onLoad;
+		img.src = `assets/images/${i}`;
+	}
 }
 
 export function checkAnswer(quest, answer) {

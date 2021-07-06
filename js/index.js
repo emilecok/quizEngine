@@ -4,8 +4,8 @@ import config from '../app/config.json'; // game configuration
 import gameData from '../app/gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
-import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { loadingLogo, checkAnswer, shuffle, restartGame } from './game.js';
+import { clearContext, placeImage, getCenterH, getCenterV } from './draw.js';
+import { imagePreloader, checkAnswer, shuffle, restartGame } from './game.js';
 
 // Engine variables -------------------------------------
 const DEBUG = config.debug;
@@ -18,7 +18,6 @@ let game = {}; // main game variable
 let areas = { game: {}, finish: {} };
 let images = {};
 let buttons = {};
-
 
 // Init -------------------------------------------------
 window.onload = function() {
@@ -36,13 +35,23 @@ window.onload = function() {
 	if (DEBUG)
 		console.log(landscape_orientation ? "Canvas orientation set to landscape" : "Canvas orientation set to portrait");
 
-	loadingLogo(images);
+	let imageLogo = new Image();
+	imageLogo.src = "assets/logo.png";
+	images.logo = imageLogo;
+
+	let questImages = [];
+
+	for (const [key, value] of Object.entries(gameData.questions)) {
+		questImages.push(value.image);
+	}
+
+	imagePreloader(questImages, function() { game.loadedState = true; });
 
 	game.loadedState = false;
 	game.finish = false;
 	game.currentQuest = 0;
 
-	shuffle(gameData); // shuffle quests
+	shuffle(gameData.questions); // shuffle quests
 	shuffle(gameData.questions[game.currentQuest].answer); // shuffle first quest answers
 
 	// присваем всем квестам статус не выполнен
@@ -59,6 +68,14 @@ window.onload = function() {
 		}
 		areas.game.questImage = { x: 10, y: areas.game.questProgress.y + areas.game.questProgress.h + 10,
 			w: cW - 20, h: areas.game.labelQuestion.y - areas.game.questProgress.y - (areas.game.questProgress.h * 2) };
+
+		let progressBarHeight = cH - (getCenterV(cH, images.logo.height) + images.logo.height) > 301 ?
+			getCenterV(cH, images.logo.height) + images.logo.height + 70 : cH - 70;
+
+		areas.splash = {
+			border: { x: getCenterH(cW, config.loaderWidth), y: progressBarHeight, w: config.loaderWidth, h: 20 },
+			pointer: { position: 0, direction: true },
+		}
 
 		areas.finish.labelFinishGameName = { x: 10, y: 60, w: cW - 20, h: 30 };
 		areas.finish.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
@@ -108,15 +125,19 @@ function gameLoop(timeStamp) {
 
 // Game update func -------------------------------------
 function update() {
-	// progressBar %percentage updater
-	// and set gameStateLoaded true
-	if (!game.loadedState && game.loadingProgress <= 99) {
-		// TODO: реализовать функционал проверки загрузки изображений and fonts
-		if (DEBUG) game.loadingProgress += 10; // FIXME: костыль
-		else game.loadingProgress += 1;
+	if (!game.loadedState) {
+		if (areas.splash.pointer.position < areas.splash.border.w - 50 && areas.splash.pointer.direction) {
+			areas.splash.pointer.position += 1;
+		}
+		else areas.splash.pointer.direction = false;
+
+		if (!areas.splash.pointer.direction) {
+			if (areas.splash.pointer.position <= 0)
+				areas.splash.pointer.direction = true;
+
+			areas.splash.pointer.position -= 1;
+		}
 	}
-	else if (game.loadingProgress == 100)
-		game.loadedState = true;
 
 	if (game.loadedState && !game.finish) {
 		buttons.answerButton0 = { x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
@@ -156,27 +177,19 @@ function draw() {
 
 	// render splash screen -----------------------------
 	if (!game.loadedState) {
-		// TODO: change if(! to NaN check
-		if (!game.loadingProgress) {
-			game.loadingProgress = 0;
-		}
-
 		context.drawImage(images.logo, getCenterH(cW, images.logo.width), getCenterV(cH, images.logo.height));
 
-		// TODO: check loadedState to final loading game
+		context.font = "32px Yanone Kaffeesatz";
+		context.textAlign = "center";
+		context.fillStyle = "white";
+
+		context.fillRect(areas.splash.pointer.position + areas.splash.border.x, areas.splash.border.y, 50, areas.splash.border.h);
+		context.strokeRect(areas.splash.border.x, areas.splash.border.y,
+			areas.splash.border.w, areas.splash.border.h);
+
 		context.strokeStyle = "black";
 		context.lineWidth = 2;
 		context.fillStyle = "yellow";
-
-		// FIXME: translate to English
-		// если расстояние от нижнего края картинки до конца канваса меньше ???
-		// то рисуем прогрессбар от нижнего края 
-		// если больше, то на расстояние от картинки
-		let progressBarHeight = cH - (getCenterV(cH, images.logo.height) + images.logo.height) > 301 ?
-			getCenterV(cH, images.logo.height) + images.logo.height + 70 : cH - 70;
-
-		context.fillRect(50, progressBarHeight, ((cW - 100) / 100 * game.loadingProgress), 20);
-		context.strokeRect(50, progressBarHeight, cW - 100, 20);
 	}
 
 	// render game --------------------------------------
@@ -203,6 +216,11 @@ function draw() {
 			context.fillRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
 			context.strokeRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
 		}
+
+		// draw quest image
+		let i = new Image();
+		i.src = `assets/images/${gameData.questions[game.currentQuest].image}`;
+		placeImage(canvas, areas.game.questImage, i);
 
 		// draw question label
 		context.font = "32px Yanone Kaffeesatz";
@@ -242,8 +260,7 @@ function draw() {
 
 		context.fillText(config['gameName'], cW / 2, areas.finish.labelFinishGameName.y + 25);
 
-		// draw labelTotalAnswerRight :FIXME:
-		
+		// draw labelTotalAnswerRight
 		let rightAnswer = 0;
 		gameData.questions.forEach(element => element.status ? rightAnswer += 1 : null);
 		context.font = "50px Yanone Kaffeesatz";
@@ -259,11 +276,6 @@ function draw() {
 		context.font = "50px Yanone Kaffeesatz";
 		let resultInfo = null;
 
-		// for (let i = gameData.answerResult.length - 1; i >= 0; i--) {
-		// 	if (rightAnswerPercentage > gameData.answerResult[i]) {
-		// 		resultInfo = gameData.answerResult[i];
-		// 	}
-		// }
 		for (const [key, value] of Object.entries(gameData.answerResult)) {
 			if (key <= rightAnswerPercentage) {
 				resultInfo = value;

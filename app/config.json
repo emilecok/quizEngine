@@ -1,5 +1,6 @@
 {
   "gameName": "quizEngine",
   "gameVersion": [0, 0, 1],
-  "debug": true
+  "debug": true,
+  "loaderWidth": 200
 }

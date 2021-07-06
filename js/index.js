@@ -1,7 +1,7 @@
 'use strict';
 
-import config from '../config.json'; // game configuration
-import gameData from '../gameData.json'; // game data
+import config from '../app/config.json'; // game configuration
+import gameData from '../app/gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';

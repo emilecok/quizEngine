@@ -1,11 +1,15 @@
 const path = require('path');
 
 module.exports = {
-  entry: './js/index.js',
-  context: path.resolve(__dirname, 'app'),
   mode: 'development',
+  entry: './js/index.js',
   output: {
-    path: path.resolve(__dirname, 'app/dist'),
-    filename: 'game.js',
+    path: path.resolve(__dirname, 'app'),
+    filename: 'engine.js',
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'app'),
+    compress: false,
+    port: 55555,
   },
 };

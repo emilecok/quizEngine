@@ -22,3 +22,10 @@ export function shuffle(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+export function restartGame(game, quests) {
+	shuffle(quests);
+	quests.forEach(element => element.status = null);
+	game.finish = false;
+	game.currentQuest = 0;
+}

@@ -5,7 +5,7 @@ import gameData from '../app/gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, getCenterH, getCenterV } from './draw.js';
-import { loadingLogo, checkAnswer, shuffle } from './game.js';
+import { loadingLogo, checkAnswer, shuffle, restartGame } from './game.js';
 
 // Engine variables -------------------------------------
 const DEBUG = config.debug;
@@ -74,13 +74,22 @@ window.onload = function() {
 		let mousePos = getMousePos(canvas, evt);
 
 		for (const [key, value] of Object.entries(buttons)) {
-			if (isInside(mousePos, value)) {
-				checkAnswer(gameData.questions[game.currentQuest], value.data);
+			if (!game.finish && key != undefined) {
+				if (isInside(mousePos, value)) {
+					checkAnswer(gameData.questions[game.currentQuest], value.data);
 
-				if (game.currentQuest < gameData.questions.length - 1) {
-					game.currentQuest += 1;
+					if (game.currentQuest < gameData.questions.length - 1) {
+						game.currentQuest += 1;
+					}
+					else game.finish = true;
 				}
-				else game.finish = true;
+			}
+		}
+
+		if (game.finish && buttons.btnRestart != undefined) {
+			if (isInside(mousePos, buttons.btnRestart)) {
+				restartGame(game, gameData.questions);
+				delete buttons.btnRestart;
 			}
 		}
 	}, false);
@@ -132,6 +141,11 @@ function update() {
 	}
 
 	if (game.finish) {
+		delete buttons.answerButton0;
+		delete buttons.answerButton1;
+		delete buttons.answerButton2;
+		delete buttons.answerButton3;
+
 		buttons.btnRestart = { x: getCenterH(cW, cW / 1.5), y: areas.finish.labelTotalInfo.y + areas.finish.labelTotalInfo.h + 20, w: cW / 1.5, h: 70, data: "Ответить на вопросы заново" };
 	}
 }

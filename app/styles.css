@@ -1,7 +1,7 @@
 @font-face {
 	font-family: 'Yanone Kaffeesatz';
-	src: url('YanoneKaffeesatz-Bold.woff2') format('woff2'),
-		url('YanoneKaffeesatz-Bold.woff') format('woff');
+	src: url('assets/fonts/YanoneKaffeesatz-Bold.woff2') format('woff2'),
+		url('assets/fonts/YanoneKaffeesatz-Bold.woff') format('woff');
 	font-weight: bold;
 	font-style: normal;
 	font-display: swap;
@@ -9,8 +9,8 @@
 
 @font-face {
 	font-family: 'Yanone Kaffeesatz';
-	src: url('YanoneKaffeesatz-Regular.woff2') format('woff2'),
-		url('YanoneKaffeesatz-Regular.woff') format('woff');
+	src: url('assets/fonts/YanoneKaffeesatz-Regular.woff2') format('woff2'),
+		url('assets/fonts/YanoneKaffeesatz-Regular.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;

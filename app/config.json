@@ -3,5 +3,13 @@
   "gameVersion": [0, 0, 1],
   "debug": true,
   "loaderWidth": 200,
+  "colors": {
+    "back": "#2f3542",
+    "answer": {
+      "wrong": "#ff6b81",
+      "right": "#7bed9f",
+      "notPassed": "#a4b0be"
+    }
+  },
   "music": "music.mp3"
 }

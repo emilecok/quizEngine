@@ -5,6 +5,7 @@ import gameData from '../app/gameData.json'; // game data
 
 import { getMousePos, isInside } from './buttons.js';
 import { clearContext, placeImage, getCenterH, getCenterV } from './draw.js';
+import { playMusic } from './music.js';
 import { imagePreloader, checkAnswer, shuffle, restartGame } from './game.js';
 
 // Engine variables -------------------------------------
@@ -18,6 +19,7 @@ let game = {}; // main game variable
 let areas = { game: {}, finish: {} };
 let images = {};
 let buttons = {};
+let music = {};
 
 // Init -------------------------------------------------
 window.onload = function() {
@@ -46,6 +48,9 @@ window.onload = function() {
 	}
 
 	imagePreloader(questImages, function() { game.loadedState = true; });
+
+	music.music = new AudioContext() || new webkitAudioContext();
+	playMusic(config, music.music);
 
 	game.loadedState = false;
 	game.finish = false;

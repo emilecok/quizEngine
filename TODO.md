@@ -1,9 +1,11 @@
 ## TODO:
+- info widget
 - finish game image
 - desktop (landscape) orientation
 - change quest animation
 - button hover animation
 - make docs/
+- make quests editor
 
 ## Done
 - background music [c814f77]

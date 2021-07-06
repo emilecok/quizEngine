@@ -16,9 +16,10 @@ let cW = null; // canvas with
 let cH = null; // canvas height
 let landscape_orientation = null; // canvas orientation
 let game = {}; // main game variable
-let areas = { game: {}, finish: {} };
+let areas = { splash: {}, game: {}, finish: {} };
 let images = {};
 let buttons = {};
+let buttonsUi = {};
 let music = {};
 
 // Init -------------------------------------------------
@@ -56,10 +57,11 @@ window.onload = function() {
 	game.finish = false;
 	game.currentQuest = 0;
 
-	shuffle(gameData.questions); // shuffle quests
-	shuffle(gameData.questions[game.currentQuest].answer); // shuffle first quest answers
+	// shuffle quests and first quest answers
+	shuffle(gameData.questions);
+	shuffle(gameData.questions[game.currentQuest].answer);
 
-	// присваем всем квестам статус не выполнен
+	// set all quest status 'not answered'
 	gameData.questions.forEach(element => element.status = null);
 
 	// set areas sizes
@@ -91,9 +93,24 @@ window.onload = function() {
 		// TODO: add areas for landscape mode
 	}
 
-	// click by buttons?!
+	// click by buttons
 	canvas.addEventListener('click', function(evt) {
 		let mousePos = getMousePos(canvas, evt);
+
+		if (game.loadedState) {
+			for (const [key, value] of Object.entries(buttonsUi)) {
+				if (isInside(mousePos, value)) {
+					// Music button
+					if (key == "uiMusic") {
+						music.music.suspend();
+
+						if (music.music.state == "suspended") {
+							music.music.resume();
+						}
+					}
+				}
+			}
+		}
 
 		for (const [key, value] of Object.entries(buttons)) {
 			if (!game.finish && key != undefined) {
@@ -164,6 +181,11 @@ function update() {
 		answerButtonsArray.forEach(function callback(value, index) {
 			value.data = gameData.questions[game.currentQuest].answer[index];
 		});
+
+		buttonsUi.uiMusic = { x: areas.game.btnUi.x, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi };
+		buttonsUi.uiInfo = { x: areas.game.btnUi.x, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
+		buttonsUi.uiMusic = { x: areas.game.btnUi.w + areas.game.btnUi.x - areas.game.btnUi.h, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
+		buttonsUi.uiSfx = { x: areas.game.btnUi.w + areas.game.btnUi.x - (areas.game.btnUi.h * 2) - 10, y: areas.game.btnUi.y, w: areas.game.btnUi.h, h: areas.game.btnUi.h };
 	}
 
 	if (game.finish) {
@@ -254,6 +276,16 @@ function draw() {
 		answerButtonsArray.forEach(function callback(value) {
 			context.fillText(value.data, cW / 2, value.y + 35);
 		});
+
+		// draw UI buttons
+		context.fillStyle = "purple";
+		context.strokeStyle = "navy";
+		context.lineWidth = 2;
+
+		for (const [key, value] of Object.entries(buttonsUi)) {
+			context.fillRect(value.x, value.y, value.w, value.h);
+			context.strokeRect(value.x, value.y, value.w, value.h);
+		}
 	}
 
 	// render result game -------------------------------
@@ -300,6 +332,7 @@ function draw() {
 		context.fillStyle = "white";
 		context.fillText(buttons.btnRestart.data, cW / 2, buttons.btnRestart.y + 43);
 	}
+
 	// draw game areas ----------------------------------
 	if (DEBUG && !game.finish && game.loadedState) {
 		context.strokeStyle = "red";

@@ -44,8 +44,7 @@ window.onload = function() {
 	images.logo = imageLogo;
 
 	let loadingImages = [];
-	loadingImages.push(gameData.result.notPassed);
-	loadingImages.push(gameData.result.passed);
+	loadingImages.push(gameData.result.notPassed, gameData.result.passed);
 
 	for (const [key, value] of Object.entries(gameData.questions)) {
 		loadingImages.push(value.image);

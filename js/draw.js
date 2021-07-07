@@ -1,5 +1,9 @@
 // функции рисоввания
 
+/**
+ * @param {Object} canvas canvas object
+ * @param {String} color строка с цветом (HEX, либо имя, либо rgba, etc)
+ */
 export function clearContext(canvas, color) {
 	let cW = canvas.width;
 	let cH = canvas.height;
@@ -41,10 +45,22 @@ export function placeImage(canvas, area, imageFile, colors) {
 	}
 }
 
+/**
+ * Возвращает X координату для центрировки объекта 
+ * @param {Integer} canvasWidth
+ * @param {Integer} objectWidth
+ * @return {Integer} X координата
+ */
 export function getCenterH(canvasWidth, objectWidth) {
 	return canvasWidth / 2 - objectWidth / 2;
 }
 
+/**
+ * Возвращает Y координату для центрировки объекта 
+ * @param {Integer} canvasHeight
+ * @param {Integer} objectHeight
+ * @return {Integer} Y координата
+ */
 export function getCenterV(canvasHeight, objectHeight) {
 	return canvasHeight / 2 - objectHeight / 2;
 }
@@ -74,6 +90,13 @@ export function drawInfo(canvas, landscape_orientation) {
 	// }
 }
 
+/**
+ * Рисует полосу прогресса с визуализацией правильных и неправильных ответов
+ * @param {} context
+ * @param {Object} area зона в которой будет отрисовываться объект
+ * @param {Object} colors объект цветов
+ * @param {Object} questions объект вопросов
+ */
 export function drawProgressBar(context, area, colors, questions) {
 	let sizeProgressItem = area.w / questions.length;
 

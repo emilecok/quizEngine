@@ -1,3 +1,8 @@
+/**
+ * Воспроизводит фоновую музыку
+ * @param {Object} config объект с параметрами движка
+ * @param {AudioContext} music
+ */
 export function playMusic(config, music) {
 	let request = new XMLHttpRequest();
 

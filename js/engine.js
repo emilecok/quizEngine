@@ -1,5 +1,11 @@
 import config from './config.json';
 
+/**
+ * Функция, которая загружает изображения в документ
+ * и по завершению выполнятся callback() функция
+ * @param {Array} images массив с именами файлов
+ * @param {Function} callback callback() функция
+ */
 export function imagePreloader(images, callback) {
 	let counter = 0;
 
@@ -15,9 +21,11 @@ export function imagePreloader(images, callback) {
 	}
 }
 
+/**
+ * Функция случайным образом перемешивает массив
+ * @param {Array} array массив, элементы которого будут перемешаны
+ */
 export function shuffle(array) {
-	// ф
-
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -28,7 +36,7 @@ export function shuffle(array) {
 /**
  * Функция возвращает ориентацию игры в зависимости от размера canvas
  * @param {Object} canvas canvas object
- * @return {Bool} landscape_orientation
+ * @return {Bool} значение, которое присвается landscape_orientation в index.js
  */
 export function setOrientation(canvas) {
 	let landscape_orientation = null;

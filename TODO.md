@@ -1,5 +1,6 @@
 ## TODO:
 - image border
+- draw button and other elements func
 - info widget
 - finish game image
 - desktop (landscape) orientation

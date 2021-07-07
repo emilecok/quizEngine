@@ -5,7 +5,11 @@
   "loaderWidth": 200,
   "colors": {
     "back": "#2f3542",
+    "buttonFill": "#a4b0be",
+    "buttonStroke": "#191C23",
+    "buttonFont": "#000000",
     "answer": {
+      "stroke": "#191C23",
       "wrong": "#ff6b81",
       "right": "#7bed9f",
       "notPassed": "#a4b0be"

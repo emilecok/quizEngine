@@ -242,7 +242,7 @@ function draw() {
 		// draw progress bar
 		let sizeProgressItem = areas.game.questProgress.w / gameData.questions.length;
 
-		context.strokeStyle = "black";
+		context.strokeStyle = config.colors.answer.stroke;
 
 		for (let i = 0; i < gameData.questions.length; i++) {
 			// change progress item color by status answer
@@ -274,8 +274,8 @@ function draw() {
 		context.fillText(gameData.questions[game.currentQuest].question, cW / 2, areas.game.labelQuestion.y + 30);
 
 		// draw answer buttons
-		context.fillStyle = "#2ed573";
-		context.strokeStyle = "#000000";
+		context.fillStyle = config.colors.buttonFill;
+		context.strokeStyle = config.colors.buttonStroke;
 		context.lineWidth = 2;
 		
 		let answerButtonsArray = [buttons.answerButton0, buttons.answerButton1,
@@ -289,15 +289,15 @@ function draw() {
 		// draw answer button label
 		context.font = "32px Yanone Kaffeesatz";
 		context.textAlign = "center";
-		context.fillStyle = "white";
+		context.fillStyle = config.colors.buttonFont;
 
 		answerButtonsArray.forEach(function callback(value) {
 			context.fillText(value.data, cW / 2, value.y + 35);
 		});
 
 		// draw UI buttons
-		context.fillStyle = "#2ed573";
-		context.strokeStyle = "#000000";
+		context.fillStyle = config.colors.buttonFill;
+		context.strokeStyle = config.colors.buttonStroke;
 		context.lineWidth = 2;
 
 		for (const [key, value] of Object.entries(buttonsUi)) {
@@ -319,13 +319,13 @@ function draw() {
 		let rightAnswer = 0;
 		gameData.questions.forEach(element => element.status ? rightAnswer += 1 : null);
 		context.font = "50px Yanone Kaffeesatz";
-		context.fillText(`Вы ответили правильно на ${rightAnswer} из ${gameData.questions.length} вопросов`, cW / 2, areas.finish.labelTotalAnswerRight.y + 45);
+		context.fillText(`Результат: ${rightAnswer} из ${gameData.questions.length} ответов верны`, cW / 2, areas.finish.labelTotalAnswerRight.y + 45);
 		
 
 		// draw labelTotalAnswerPercent
 		let rightAnswerPercentage = Math.ceil(rightAnswer / gameData.questions.length * 100);
 		context.font = "75px Yanone Kaffeesatz";
-		context.fillText(`${rightAnswerPercentage}%`, cW / 2, areas.finish.labelTotalAnswerPercent.y + 65);
+		context.fillText(`Выполнено на ${rightAnswerPercentage}%`, cW / 2, areas.finish.labelTotalAnswerPercent.y + 65);
 
 		// labelTotalInfo
 		context.font = "50px Yanone Kaffeesatz";
@@ -340,14 +340,14 @@ function draw() {
 		context.fillText(resultInfo, cW / 2, areas.finish.labelTotalInfo.y + 55);
 		
 		// draw btnRestart
-		context.fillStyle = "#2ed573";
-		context.strokeStyle = "#000000";
+		context.fillStyle = config.colors.buttonFill;
+		context.strokeStyle = config.colors.buttonStroke;
 		context.fillRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
 		context.strokeRect(buttons.btnRestart.x, buttons.btnRestart.y, buttons.btnRestart.w, buttons.btnRestart.h);
 
 		context.font = "32px Yanone Kaffeesatz";
 		context.textAlign = "center";
-		context.fillStyle = "white";
+		context.fillStyle = config.colors.buttonFont;
 		context.fillText(buttons.btnRestart.data, cW / 2, buttons.btnRestart.y + 43);
 	}
 

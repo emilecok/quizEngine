@@ -265,7 +265,7 @@ function draw() {
 		// draw quest image
 		let i = new Image();
 		i.src = `assets/images/${gameData.questions[game.currentQuest].image}`;
-		placeImage(canvas, areas.game.questImage, i);
+		placeImage(canvas, areas.game.questImage, i, config.colors);
 
 		// draw question label
 		context.font = "32px Yanone Kaffeesatz";
@@ -276,7 +276,7 @@ function draw() {
 		// draw answer buttons
 		context.fillStyle = config.colors.buttonFill;
 		context.strokeStyle = config.colors.buttonStroke;
-		context.lineWidth = 2;
+		context.lineWidth = config.colors.strokeSize;
 		
 		let answerButtonsArray = [buttons.answerButton0, buttons.answerButton1,
 			buttons.answerButton2, buttons.answerButton3];
@@ -298,7 +298,7 @@ function draw() {
 		// draw UI buttons
 		context.fillStyle = config.colors.buttonFill;
 		context.strokeStyle = config.colors.buttonStroke;
-		context.lineWidth = 2;
+		context.lineWidth = config.colors.strokeSize;
 
 		for (const [key, value] of Object.entries(buttonsUi)) {
 			context.fillRect(value.x, value.y, value.w, value.h);

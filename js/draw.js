@@ -10,29 +10,31 @@ export function clearContext(canvas, color) {
 	context.fillRect(0, 0, cW, cH);
 }
 
-export function placeImage(canvas, area, image) {
+export function placeImage(canvas, area, image, colors) {
 	let context = canvas.getContext('2d');
+
+	context.strokeStyle = colors.buttonStroke;
+	context.lineWidth = colors.strokeSize;
 
 	if (image.width >= image.height) {
 		if (image.width > area.w) {
 			let newImageW = area.w;
-			let newImageH = image.height * (area.h / newImageW);
-
-			if (newImageH > area.h) {
-				newImageH = area.h;
-				// BUG: ...
-				newImageW = image.width * (area.h / image.height);
-				context.drawImage(image, getCenterH(canvas.width, newImageW), area.y, newImageW, newImageH);
-			}
-			else {
-				context.drawImage(image, area.x, getCenterV(canvas.height - area.h + area.y, newImageH), newImageW, newImageH);
-			}
+			let newImageH = image.height / (image.width / area.w);
+			
+			context.drawImage(image, getCenterH(canvas.width, newImageW), area.y, newImageW, newImageH);
+			context.strokeRect(getCenterH(canvas.width, newImageW), area.y, newImageW, newImageH);
+		}
+		else {
+			// TODO: getCenterV({this}) <= need plus progressBar sizes
+			context.drawImage(image, getCenterH(canvas.width, image.width), getCenterV(area.y + area.h, image.height), image.width, image.height);
+			context.strokeRect(getCenterH(canvas.width, image.width), getCenterV(area.y + area.h, image.height), image.width, image.height);
 		}
 	}
 	else {
 		let newImageH = area.h;
 		let newImageW = image.width * (area.h / image.height);
 		context.drawImage(image, getCenterH(canvas.width, newImageW), area.y, newImageW, newImageH);
+		context.strokeRect(getCenterH(canvas.width, newImageW), area.y, newImageW, newImageH);
 	}
 }
 

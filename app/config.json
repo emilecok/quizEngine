@@ -5,6 +5,7 @@
   "loaderWidth": 200,
   "colors": {
     "back": "#2f3542",
+    "strokeSize": 1.5,
     "buttonFill": "#a4b0be",
     "buttonStroke": "#191C23",
     "buttonFont": "#000000",

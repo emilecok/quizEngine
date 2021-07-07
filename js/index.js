@@ -1,12 +1,16 @@
 'use strict';
 
+// Import game configs and questsData -------------------
 import config from '../app/config.json'; // game configuration
 import gameData from '../app/gameData.json'; // game data
 
-import { getMousePos, isInside } from './buttons.js';
-import { clearContext, placeImage, getCenterH, getCenterV } from './draw.js';
-import { playMusic } from './music.js';
-import { imagePreloader, checkAnswer, shuffle, restartGame } from './game.js';
+// Import engine libs -----------------------------------
+import * as Engine from './engine.js';
+import * as Buttons from './buttons.js';
+import * as Draw from './draw.js';
+import * as Music from './music.js';
+import * as Areas from './areas.js';
+import * as Game from './game.js';
 
 // Engine variables -------------------------------------
 const DEBUG = config.debug;
@@ -16,13 +20,13 @@ let cW = null; // canvas with
 let cH = null; // canvas height
 let landscape_orientation = null; // canvas orientation
 let game = {}; // main game variable
-let areas = { splash: {}, game: {}, finish: {} };
+let areas = null;
 let images = {};
 let buttons = {};
 let buttonsUi = {};
 let music = {};
 
-// Init -------------------------------------------------
+// Engine init ------------------------------------------
 window.onload = function() {
 	// init canvas id and sizes
 	canvas = document.getElementById('game');
@@ -50,75 +54,52 @@ window.onload = function() {
 		loadingImages.push(value.image);
 	}
 
-	imagePreloader(loadingImages, function() {
+	Engine.imagePreloader(loadingImages, function() {
 		game.loadedState = true;
 		game.showAlpha = 1;
 	});
 
+	// TODO: rewrite playMusic() func
 	music.music = new AudioContext() || new webkitAudioContext();
-	playMusic(config, music.music);
+	Music.playMusic(config, music.music);
 
 	game.showAlpha = null;
+	game.showInfo = false;
 	game.loadedState = false;
 	game.finish = false;
 	game.currentQuest = 0;
 
 	// shuffle quests and first quest answers
-	shuffle(gameData.questions);
-	shuffle(gameData.questions[game.currentQuest].answer);
+	Engine.shuffle(gameData.questions);
+	gameData.questions.forEach(quest => {
+		Engine.shuffle(quest.answer);
+	});
+	
 
 	// set all quest status 'not answered'
 	gameData.questions.forEach(element => element.status = null);
 
 	// set areas sizes
-	if (!landscape_orientation) {
-		areas.game = {
-			// { x: 0, y: 0, w: 0, h: 0 }
-			btnAnswer: { x: 10, y: cH - 340, w: cW - 20, h: 250 },
-			labelQuestion: { x: 10, y: cH - 340 - 80, w: cW - 20, h: 70 },
-			btnUi: { x: 10, y: cH - 80, w: cW - 20, h: 70 },
-			questProgress: { x: 10, y: 10, w: cW - 20, h: 20 },
-		}
-		areas.game.questImage = { x: 10, y: areas.game.questProgress.y + areas.game.questProgress.h + 10,
-			w: cW - 20, h: areas.game.labelQuestion.y - areas.game.questProgress.y - (areas.game.questProgress.h * 2) };
-
-		let progressBarHeight = cH - (getCenterV(cH, images.logo.height) + images.logo.height) > 301 ?
-			getCenterV(cH, images.logo.height) + images.logo.height + 70 : cH - 70;
-
-		areas.splash = {
-			border: { x: getCenterH(cW, config.loaderWidth), y: progressBarHeight, w: config.loaderWidth, h: 20 },
-			pointer: { position: 0, direction: true },
-		}
-
-		areas.finish.labelFinishGameName = { x: 10, y: 60, w: cW - 20, h: 30 };
-		areas.finish.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
-		areas.finish.labelTotalAnswerRight = { x: 10, y: areas.finish.labelTotalAnswerPercent.y - 70, w: cW - 20, h: 60 };
-		areas.finish.labelTotalInfo = { x: 10, y: areas.finish.labelTotalAnswerPercent.y + areas.finish.labelTotalAnswerPercent.h + 10, w: cW - 20, h: 90 };
-		areas.finish.image = { x: 10, y: areas.finish.labelFinishGameName.y + areas.finish.labelFinishGameName.h + 10, w: cW - 20, h: areas.finish.labelTotalAnswerRight.y - 20 - areas.finish.labelFinishGameName.y - areas.finish.labelFinishGameName.h };
-	}
-	else {
-		// TODO: add areas for landscape mode
-	}
+	areas = Areas.setAreas(canvas, landscape_orientation, images.logo);
 
 	// hover by buttons
 	canvas.addEventListener('mousemove', e => {
-		let mousePos = getMousePos(canvas, e);
+		let mousePos = Buttons.getMousePos(canvas, e);
 
 		for (const [key, value] of Object.entries(buttonsUi)) {
-			if (isInside(mousePos, value)) {
+			if (Buttons.isInside(mousePos, value)) {
 				console.log("hover", key)
 			}
 		}
-
-	});
+	}, false);
 
 	// click by buttons
 	canvas.addEventListener('click', e => {
-		let mousePos = getMousePos(canvas, e);
+		let mousePos = Buttons.getMousePos(canvas, e);
 
 		if (game.loadedState) {
 			for (const [key, value] of Object.entries(buttonsUi)) {
-				if (isInside(mousePos, value)) {
+				if (Buttons.isInside(mousePos, value)) {
 					// Music button
 					if (key == "uiMusic") {
 						music.music.suspend();
@@ -127,14 +108,19 @@ window.onload = function() {
 							music.music.resume();
 						}
 					}
+
+					// Info button
+					if (key == "uiInfo") {
+						game.showInfo = true;
+					}
 				}
 			}
 		}
 
 		for (const [key, value] of Object.entries(buttons)) {
 			if (!game.finish && key != undefined) {
-				if (isInside(mousePos, value)) {
-					checkAnswer(gameData.questions[game.currentQuest], value.data);
+				if (Buttons.isInside(mousePos, value)) {
+					Game.checkAnswer(gameData.questions[game.currentQuest], value.data);
 
 					if (game.currentQuest < gameData.questions.length - 1) {
 						game.currentQuest += 1;
@@ -148,8 +134,8 @@ window.onload = function() {
 		}
 
 		if (game.finish && buttons.btnRestart != undefined) {
-			if (isInside(mousePos, buttons.btnRestart)) {
-				restartGame(game, gameData.questions);
+			if (Buttons.isInside(mousePos, buttons.btnRestart)) {
+				Game.restartGame(game, gameData.questions);
 				delete buttons.btnRestart;
 			}
 		}
@@ -188,10 +174,10 @@ function update() {
 	}
 
 	if (game.loadedState && !game.finish) {
-		buttons.answerButton0 = { x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
-		buttons.answerButton1 = { x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
-		buttons.answerButton2 = { x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
-		buttons.answerButton3 = { x: getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
+		buttons.answerButton0 = { x: Draw.getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
+		buttons.answerButton1 = { x: Draw.getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
+		buttons.answerButton2 = { x: Draw.getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
+		buttons.answerButton3 = { x: Draw.getCenterH(cW, cW / 1.5), y: 0, w: cW / 1.5, h: 50, data: null };
 
 		let answerButtonsArray = [buttons.answerButton0, buttons.answerButton1,
 			buttons.answerButton2, buttons.answerButton3];
@@ -219,17 +205,17 @@ function update() {
 		delete buttons.answerButton2;
 		delete buttons.answerButton3;
 
-		buttons.btnRestart = { x: getCenterH(cW, cW / 1.5), y: areas.finish.labelTotalInfo.y + areas.finish.labelTotalInfo.h + 20, w: cW / 1.5, h: 70, data: "Ответить на вопросы заново" };
+		buttons.btnRestart = { x: Draw.getCenterH(cW, cW / 1.5), y: areas.finish.labelTotalInfo.y + areas.finish.labelTotalInfo.h + 20, w: cW / 1.5, h: 70, data: "Ответить на вопросы заново" };
 	}
 }
 
 // Draw to canvas func ----------------------------------
 function draw() {
-	clearContext(canvas, config.colors.back); // clean canvas
+	Draw.clearContext(canvas, config.colors.back); // clean canvas
 
 	// render splash screen -----------------------------
 	if (!game.loadedState) {
-		context.drawImage(images.logo, getCenterH(cW, images.logo.width), getCenterV(cH, images.logo.height));
+		context.drawImage(images.logo, Draw.getCenterH(cW, images.logo.width), Draw.getCenterV(cH, images.logo.height));
 
 		context.font = "32px Yanone Kaffeesatz";
 		context.textAlign = "center";
@@ -243,39 +229,15 @@ function draw() {
 	// render game --------------------------------------
 	if (!game.finish && game.loadedState) {
 		// draw progress bar
-		let sizeProgressItem = areas.game.questProgress.w / gameData.questions.length;
-
-		context.strokeStyle = config.colors.answer.stroke;
-
-		for (let i = 0; i < gameData.questions.length; i++) {
-			// change progress item color by status answer
-			switch (gameData.questions[i].status) {
-				case null:
-					context.fillStyle = config.colors.answer.notPassed;
-					break;
-				case true:
-					context.fillStyle = config.colors.answer.right;
-					break;
-				case false:
-					context.fillStyle = config.colors.answer.wrong;
-					break;
-			}
-
-			context.fillRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
-			context.strokeRect(10 + (i * sizeProgressItem), 10, sizeProgressItem, 20);
-		}
+		Draw.drawProgressBar(context, areas.game.questProgress, config.colors, gameData.questions);
 
 		// draw quest image
-		let i = new Image();
-		i.src = `assets/images/${gameData.questions[game.currentQuest].image}`;
-		placeImage(canvas, areas.game.questImage, i, config.colors);
+		Draw.placeImage(canvas, areas.game.questImage,
+			gameData.questions[game.currentQuest].image, config.colors);
 
 		// draw question label
-		context.font = "32px Yanone Kaffeesatz";
-		context.textAlign = "center";
-		context.fillStyle = "white";
-		context.fillText(gameData.questions[game.currentQuest].question, cW / 2, areas.game.labelQuestion.y + 30);
-
+		Draw.drawQuestionLabel(canvas, areas.game.labelQuestion, gameData.questions[game.currentQuest].question);
+		
 		// draw answer buttons
 		context.fillStyle = config.colors.buttonFill;
 		context.strokeStyle = config.colors.buttonStroke;
@@ -331,7 +293,7 @@ function draw() {
 			i.src = `assets/images/${gameData.result.notPassed}`
 		}
 
-		context.drawImage(i, getCenterH(cW, i.width), areas.finish.image.y + areas.finish.image.h - i.height);
+		context.drawImage(i, Draw.getCenterH(cW, i.width), areas.finish.image.y + areas.finish.image.h - i.height);
 
 		// draw labelTotalAnswerRight
 		context.font = "50px Yanone Kaffeesatz";
@@ -368,32 +330,20 @@ function draw() {
 
 	// draw game areas ----------------------------------
 	if (DEBUG && !game.finish && game.loadedState) {
-		context.strokeStyle = "red";
-		context.lineWidth = 1;
-
-		if (landscape_orientation)
-			// TODO: draw areas by landscape
-			console.log('TODO: draw answer buttons area by landscape');
-		else
-			for (const [key, value] of Object.entries(areas.game)) {
-				context.strokeRect(value.x, value.y, value.w, value.h);
-			}
+		Draw.drawGameAreas(context, areas.game);
 	}
 	else if (DEBUG && game.finish) {
-		context.strokeStyle = "red";
-		context.lineWidth = 1;
-
-		if (landscape_orientation)
-			// TODO: draw areas by landscape
-			console.log('TODO: draw answer buttons area by landscape');
-		else
-			for (const [key, value] of Object.entries(areas.finish)) {
-				context.strokeRect(value.x, value.y, value.w, value.h);
-			}
+		Draw.drawGameAreas(context, areas.finish);
 	}
 
+	// draw alpha animation -----------------------------
 	if (game.showAlpha != null) {
 		context.fillStyle =	`rgba(0,0,0,${game.showAlpha})`;
 		context.fillRect(0, 0, cW, cH);
+	}
+
+	// draw info window [indev] -------------------------
+	if (game.showInfo) {
+		Draw.drawInfo(canvas, landscape_orientation);
 	}
 }

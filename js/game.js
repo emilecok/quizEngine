@@ -1,22 +1,6 @@
 // функции игры
 
-export function imagePreloader(images, callback) {
-	let counter = 0;
-
-	// norm
-	function onLoad() {
-		counter += 1;
-		if (counter == images.length) callback();
-	}
-
-	let assetsDiv = document.getElementById("assets");
-
-	for (let i of images) {
-		let img = document.createElement('img');
-		img.onload = img.onerror = onLoad;
-		img.src = `assets/images/${i}`;
-	}
-}
+import { shuffle } from './engine.js';
 
 export function checkAnswer(quest, answer) {
 	if (Array.isArray(quest.rightAnswer)) {
@@ -40,16 +24,15 @@ export function checkAnswer(quest, answer) {
 	}
 }
 
-export function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
 export function restartGame(game, quests) {
+	// shuffle quests and answers order
 	shuffle(quests);
+	quests.forEach(quest => {
+		shuffle(quest.answer);
+	});
 	quests.forEach(element => element.status = null);
+
+	// set new game vars
 	game.finish = false;
 	game.currentQuest = 0;
 	game.showAlpha = 1;

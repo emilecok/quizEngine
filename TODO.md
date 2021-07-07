@@ -1,5 +1,4 @@
 ## TODO:
-- image border
 - draw button and other elements func
 - info widget
 - finish game image
@@ -10,6 +9,7 @@
 - make quests editor
 
 ## DONE:
+- image border [108064b]
 - background music [c814f77]
 - several correct answer [498ab55]
 - loading all quest images with loading [b8aa4b6]

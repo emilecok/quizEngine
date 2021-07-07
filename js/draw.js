@@ -26,8 +26,8 @@ export function placeImage(canvas, area, image, colors) {
 		}
 		else {
 			// TODO: getCenterV({this}) <= need plus progressBar sizes
-			context.drawImage(image, getCenterH(canvas.width, image.width), getCenterV(area.y + area.h, image.height), image.width, image.height);
-			context.strokeRect(getCenterH(canvas.width, image.width), getCenterV(area.y + area.h, image.height), image.width, image.height);
+			context.drawImage(image, getCenterH(canvas.width, image.width), getCenterV(canvas.height / 2 + area.y, image.height), image.width, image.height);
+			context.strokeRect(getCenterH(canvas.width, image.width), getCenterV(canvas.height / 2 + area.y, image.height), image.width, image.height);
 		}
 	}
 	else {

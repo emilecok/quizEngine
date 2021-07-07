@@ -42,13 +42,15 @@ window.onload = function() {
 	imageLogo.src = "assets/logo.png";
 	images.logo = imageLogo;
 
-	let questImages = [];
+	let loadingImages = [];
+	loadingImages.push(gameData.result.notPassed);
+	loadingImages.push(gameData.result.passed);
 
 	for (const [key, value] of Object.entries(gameData.questions)) {
-		questImages.push(value.image);
+		loadingImages.push(value.image);
 	}
 
-	imagePreloader(questImages, function() {
+	imagePreloader(loadingImages, function() {
 		game.loadedState = true;
 		game.showAlpha = 1;
 	});
@@ -92,6 +94,7 @@ window.onload = function() {
 		areas.finish.labelTotalAnswerPercent = { x: 10, y: getCenterV(cH, 80), w: cW - 20, h: 80 };
 		areas.finish.labelTotalAnswerRight = { x: 10, y: areas.finish.labelTotalAnswerPercent.y - 70, w: cW - 20, h: 60 };
 		areas.finish.labelTotalInfo = { x: 10, y: areas.finish.labelTotalAnswerPercent.y + areas.finish.labelTotalAnswerPercent.h + 10, w: cW - 20, h: 90 };
+		areas.finish.image = { x: 10, y: areas.finish.labelFinishGameName.y + areas.finish.labelFinishGameName.h + 10, w: cW - 20, h: areas.finish.labelTotalAnswerRight.y - 20 - areas.finish.labelFinishGameName.y - areas.finish.labelFinishGameName.h };
 	}
 	else {
 		// TODO: add areas for landscape mode
@@ -315,15 +318,27 @@ function draw() {
 
 		context.fillText(config['gameName'], cW / 2, areas.finish.labelFinishGameName.y + 25);
 
-		// draw labelTotalAnswerRight
+		/// draw finish game image
 		let rightAnswer = 0;
 		gameData.questions.forEach(element => element.status ? rightAnswer += 1 : null);
+		let rightAnswerPercentage = Math.ceil(rightAnswer / gameData.questions.length * 100);
+
+		let i = new Image();
+		if (rightAnswerPercentage >= gameData.result.minRightAnswer) {
+			i.src = `assets/images/${gameData.result.passed}`
+		}
+		else {
+			i.src = `assets/images/${gameData.result.notPassed}`
+		}
+
+		context.drawImage(i, getCenterH(cW, i.width), areas.finish.image.y + areas.finish.image.h - i.height);
+
+		// draw labelTotalAnswerRight
 		context.font = "50px Yanone Kaffeesatz";
 		context.fillText(`Результат: ${rightAnswer} из ${gameData.questions.length} ответов верны`, cW / 2, areas.finish.labelTotalAnswerRight.y + 45);
 		
 
 		// draw labelTotalAnswerPercent
-		let rightAnswerPercentage = Math.ceil(rightAnswer / gameData.questions.length * 100);
 		context.font = "75px Yanone Kaffeesatz";
 		context.fillText(`Выполнено на ${rightAnswerPercentage}%`, cW / 2, areas.finish.labelTotalAnswerPercent.y + 65);
 

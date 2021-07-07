@@ -1,4 +1,4 @@
-import config from '../app/config.json';
+import config from './config.json';
 
 export function imagePreloader(images, callback) {
 	let counter = 0;
@@ -16,12 +16,20 @@ export function imagePreloader(images, callback) {
 }
 
 export function shuffle(array) {
+	// ф
+
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
+// 
+/**
+ * Функция возвращает ориентацию игры в зависимости от размера canvas
+ * @param {Object} canvas canvas object
+ * @return {Bool} landscape_orientation
+ */
 export function setOrientation(canvas) {
 	let landscape_orientation = null;
 
@@ -30,8 +38,8 @@ export function setOrientation(canvas) {
 	
 	if (config.debug)
 		console.log(landscape_orientation ?
-			'Canvas orientation set to landscape' :
-			'Canvas orientation set to portrait');
+			'Set game orientation to landscape' :
+			'Set game orientation to portrait');
 
 	return landscape_orientation;
 }

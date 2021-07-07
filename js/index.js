@@ -1,8 +1,8 @@
 'use strict';
 
 // Import game configs and questsData -------------------
-import config from '../app/config.json'; // game configuration
-import gameData from '../app/gameData.json'; // game data
+import config from './config.json'; // game configuration
+import gameData from './gameData.json'; // game data
 
 // Import engine libs -----------------------------------
 import * as Engine from './engine.js';

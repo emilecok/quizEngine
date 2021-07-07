@@ -6,6 +6,7 @@
   "scripts": {
     "start": "webpack serve",
     "build": "webpack --mode=production",
+    "docs": "documentation build ./js -f md --markdown-toc=false -o docs/DOCS.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/emilecok/quizEngine#readme",
   "devDependencies": {
     "docsify-cli": "^4.4.3",
+    "documentation": "^13.2.5",
     "webpack": "^5.42.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"

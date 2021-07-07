@@ -1,3 +1,5 @@
+import config from '../app/config.json';
+
 export function imagePreloader(images, callback) {
 	let counter = 0;
 
@@ -18,4 +20,18 @@ export function shuffle(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+}
+
+export function setOrientation(canvas) {
+	let landscape_orientation = null;
+
+	if (canvas.width >= canvas.height) landscape_orientation = true;
+	else landscape_orientation = false;
+	
+	if (config.debug)
+		console.log(landscape_orientation ?
+			'Canvas orientation set to landscape' :
+			'Canvas orientation set to portrait');
+
+	return landscape_orientation;
 }

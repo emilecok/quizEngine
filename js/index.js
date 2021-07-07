@@ -37,11 +37,8 @@ window.onload = function() {
 		console.log(`Canvas size ${cW} x ${cH}`);
 
 	// set screen orientation by carculate canvas width & height
-	if (cW >= cH) { landscape_orientation = true; }
-	else { landscape_orientation = false; }
-	if (DEBUG)
-		console.log(landscape_orientation ? "Canvas orientation set to landscape" : "Canvas orientation set to portrait");
-
+	landscape_orientation = Engine.setOrientation(canvas)
+	
 	let imageLogo = new Image();
 	imageLogo.src = "assets/logo.png";
 	images.logo = imageLogo;
@@ -75,7 +72,6 @@ window.onload = function() {
 		Engine.shuffle(quest.answer);
 	});
 	
-
 	// set all quest status 'not answered'
 	gameData.questions.forEach(element => element.status = null);
 

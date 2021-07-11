@@ -28,6 +28,12 @@ let music = {};
 
 // Engine init ------------------------------------------
 window.onload = function() {
+	// set html page language
+	document.documentElement.lang = config.lang;
+
+	// set html body background-color
+	document.body.style.background = config.colors.back;
+
 	// init canvas id and sizes
 	canvas = document.getElementById('game');
 	context = canvas.getContext('2d');

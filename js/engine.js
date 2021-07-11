@@ -7,6 +7,7 @@ import config from './config.json';
  * @param {Function} callback callback() функция
  */
 export function imagePreloader(images, callback) {
+	// TODO: check file exist
 	let counter = 0;
 
 	function onLoad() {

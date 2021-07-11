@@ -2,6 +2,7 @@
   "gameName": "quizEngine",
   "gameVersion": [0, 0, 1],
   "debug": true,
+  "lang": "en-us",
   "loaderWidth": 200,
   "colors": {
     "back": "#2f3542",

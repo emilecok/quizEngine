@@ -1,5 +1,5 @@
 # quizEngine [In Development] [В разработке]
-![Logo](icon.png)
+![Logo](src/assets/icon.png)
 
 Движок для викторин
 

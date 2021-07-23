@@ -1,28 +1,19 @@
 {
-  "name": "quizEngine",
+  "private": true,
   "version": "0.0.1",
-  "description": "",
-  "main": "./js/engine.js",
   "scripts": {
-    "start": "webpack serve",
-    "build": "webpack --mode=production",
+    "serve": "webpack serve",
+    "html": "html-minifier --collapse-whitespace --remove-comments src/index.html --output dist/index.html",
+    "css": "csso src/styles.css --output dist/styles.css",
+    "build": "npm run html && npm run css && webpack --mode=production",
     "docs": "documentation build ./js -f md --markdown-toc=false -o docs/DOCS.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/emilecok/quizEngine.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/emilecok/quizEngine/issues"
-  },
-  "homepage": "https://github.com/emilecok/quizEngine#readme",
   "devDependencies": {
+    "csso-cli": "^3.0.0",
     "docsify-cli": "^4.4.3",
     "documentation": "^13.2.5",
+    "html-minifier": "^4.0.0",
     "webpack": "^5.42.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"

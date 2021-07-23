@@ -5,12 +5,12 @@ import config from './config.json'; // game configuration
 import gameData from './gameData.json'; // game data
 
 // Import engine libs -----------------------------------
-import * as Engine from './engine.js';
-import * as Buttons from './buttons.js';
-import * as Draw from './draw.js';
-import * as Music from './music.js';
-import * as Areas from './areas.js';
-import * as Game from './game.js';
+import * as Engine from './lib/engine.js';
+import * as Buttons from './lib/buttons.js';
+import * as Draw from './lib/draw.js';
+import * as Music from './lib/music.js';
+import * as Areas from './lib/areas.js';
+import * as Game from './lib/game.js';
 
 // Engine variables -------------------------------------
 const DEBUG = config.debug;

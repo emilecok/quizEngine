@@ -2,6 +2,13 @@ import config from '../config.json';
 
 import * as Draw from './draw.js'
 
+/**
+ * Устанавливает размеры и положение зон для отрисовки
+ * @param {Object} canvas
+ * @param {Bool} landscape_orientation текущая ориентация игры
+ * @param {Image} logoImage логотип
+ * @return {Object} список зон
+ */
 export function setAreas(canvas, landscape_orientation, logoImage) {
 	let areasArray = null;
 

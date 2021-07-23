@@ -2,6 +2,11 @@
 
 import { shuffle } from './engine.js';
 
+/**
+ * Проверяет правильность ответа на вопрос и устанавливает статус ответа в верно/неверно
+ * @param {Object} quest объект вопроса с вариантами ответа и правильным вариантом
+ * @param {String} answer
+ */
 export function checkAnswer(quest, answer) {
 	if (Array.isArray(quest.rightAnswer)) {
 		let lowerCaseArray = [];
@@ -24,6 +29,11 @@ export function checkAnswer(quest, answer) {
 	}
 }
 
+/**
+ * При выполнении перемешивает вопросы и варианты ответов и запускает игру сначала
+ * @param {Object} game объект игрового процесса
+ * @param {Object} quests объект с вопросами
+ */
 export function restartGame(game, quests) {
 	// shuffle quests and answers order
 	shuffle(quests);

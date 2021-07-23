@@ -28,6 +28,12 @@ let music = {};
 
 // Engine init ------------------------------------------
 window.onload = function() {
+	// set html page language
+	document.documentElement.lang = config.lang;
+
+	// set html body background-color
+	document.body.style.background = config.colors.back;
+
 	// init canvas id and sizes
 	canvas = document.getElementById('game');
 	context = canvas.getContext('2d');
@@ -44,8 +50,7 @@ window.onload = function() {
 	images.logo = imageLogo;
 
 	let loadingImages = [];
-	loadingImages.push(gameData.result.notPassed);
-	loadingImages.push(gameData.result.passed);
+	loadingImages.push(gameData.result.notPassed, gameData.result.passed);
 
 	for (const [key, value] of Object.entries(gameData.questions)) {
 		loadingImages.push(value.image);
